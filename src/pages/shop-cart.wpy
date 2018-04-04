@@ -1,0 +1,19 @@
+<style lang='less'>
+
+</style>
+
+<template>
+  <view class='gooddetail-container'>
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class GoodDeatail extends wepy.page {
+  onLoad(e) {
+    console.log(e)
+  }
+}
+</script>

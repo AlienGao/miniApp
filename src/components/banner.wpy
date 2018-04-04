@@ -1,0 +1,110 @@
+<!-- 首页banner -->
+<style lang='less'>
+.swiper-container{
+  width: 750rpx;
+  position: relative;  
+}
+.swiper_box {
+  width: 100%;
+  height:375rpx;
+}
+swiper-item image {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  height:375rpx;
+}
+.swiper-container .dots{  
+  position: absolute;  
+  left: 0;  
+  right: 0;  
+  bottom: 20rpx;  
+  display: flex;  
+  justify-content: center;  
+}  
+.swiper-container .dots .dot{  
+  margin: 0 8rpx;  
+  width: 14rpx;  
+  height: 14rpx;  
+  background: #fff;  
+  border-radius: 50%;  
+  transition: all .6s;  
+  opacity: .5;
+}  
+.swiper-container .dots .dot.active{  
+  width: 14rpx;  
+  opacity: 1;
+}
+</style>
+
+<template>
+  <view class='swiper-container'>
+    <swiper class='swiper_box' autoplay='{{autoplay}}' interval='{{interval}}' duration='{{duration}}' bindchange='swiperChange'> 
+      <repeat for='{{banners}}' index='index' key='index'>
+        <swiper-item>
+          <image  bindtap='toGoodDetail' data-id='{{item.businessId}}' src="{{item.picUrl}}_m" class="slide-image" />
+        </swiper-item>
+      </repeat>
+    </swiper>
+    <view class='dots'>
+      <repeat for='{{banners}}' index='index' key='index'>
+        <view class="dot {{index === swiperCurrent ? 'active' : ''}}" bindtap='pickDot'></view>
+      </repeat>
+    </view>
+    <toast />
+  </view>  
+</template>
+
+<script>
+import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
+
+export default class Banners extends wepy.component {
+  components = {
+    toast: Toast
+  }
+  
+  data = {
+    duration: 1500,
+    autoplay: true,
+    interval: 3000,
+    banners: [],
+    swiperCurrent: 0
+  }
+
+  onLoad () {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/banner/list',
+      data: {
+        key: 'mallName'
+      },
+      success: function (res) {
+        if(res.data.code === 404) {
+          that.$invoke('toast', 'show', {
+            title: '暂无banner'
+          })
+        } else {
+          that.banners = res.data.data.filter((item) => {
+            return item.type === 'banner'
+          })
+          that.$apply()
+        }
+      }
+    })
+  }
+  methods = {
+    swiperChange (e) {
+      this.swiperCurrent = e.detail.current
+    },
+    toGoodDetail(e) {
+      console.log(e)
+      if(e.currentTarget.dataset.id !== 0) {
+        wx.navigateTo({
+          url: '/pages/gooddetail?id=' + e.currentTarget.dataset.id
+        })
+      }
+    }
+  }
+}
+</script>

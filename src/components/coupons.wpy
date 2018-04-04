@@ -1,0 +1,54 @@
+<!-- 首页四个活动按钮 -->
+<style lang='less'>
+  .coupons-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 24rpx;
+    background: #fff;
+    width: 100%;
+  }
+  .item image {
+    width: 100rpx;
+    height: 100rpx;
+  }
+  .item text {
+    display: block;
+    font-size: 28rpx;
+    text-align: center;
+  }
+</style>
+
+<template>
+  <view class='coupons-container'>
+    <repeat for='{{coupons}}' index='index' key='index'>
+      <view class="item">
+        <image src='{{item.picUrl}}_m' />
+        <text>{{item.title}}</text>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class Coupons extends wepy.component {
+  data = {
+    coupons: []
+  }
+  onLoad() {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/banner/list',
+      data: {
+        key: 'mallName'
+      },
+      success: function (res) {
+        that.coupons = res.data.data.filter((item) => {
+          return item.type === 'coupons'
+        })
+        that.$apply()
+      }
+    })
+  }
+}
+</script>

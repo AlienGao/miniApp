@@ -1,0 +1,148 @@
+<style lang='less'>
+.swiper-container {
+  width: 750rpx;
+  position: relative;  
+}
+.swiper_box {
+  width: 100%;
+  height:748rpx;
+}
+swiper-item image {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  height:748rpx;
+}
+swiper-item video {
+  width: 100%;
+  height: 748rpx;
+}
+.swiper-container .dots{  
+  position: absolute;  
+  left: 0;  
+  right: 0;  
+  bottom: 20rpx;  
+  display: flex;  
+  justify-content: center;  
+}  
+.swiper-container .dots .dot{  
+  margin: 0 8rpx;  
+  width: 14rpx;  
+  height: 14rpx;  
+  background: #fff;  
+  border-radius: 50%;  
+  transition: all .6s;  
+  opacity: .5;
+}  
+.swiper-container .dots .dot.active{  
+  width: 14rpx;  
+  opacity: 1;
+}
+</style>
+
+<template>
+  <view class='goodDetail-container'>
+    <view class='swiper-container'>
+      <swiper class='swiper_box' autoplay='{{true}}' interval='{{3000}}' duration='{{1500}}' bindchange='swiperChange'>
+        <swiper-item wx:if='{{goodDetail.basicInfo.videoId}}'>
+          <video src='{{videoMp4Src}}' autoplay='{{false}}' loop='{{false}}' objectFit='fill'></video>
+        </swiper-item>
+        <repeat for='{{goodDetail.pics}}' key='index'>
+          <swiper-item>
+            <image src='{{item.pic}}_m' class='slide-image' lazy-load="true"></image>
+          </swiper-item>
+        </repeat>
+      </swiper>
+      <view class='dots'>
+        <repeat for='{{sourceLength}}'>
+          <view class="dot {{index === swiperCurrent ? 'active' : ''}}"></view>
+        </repeat>
+      </view>
+    </view>
+    <view class='good-info'>
+      <view class='good-title'>{{goodDetail.basicInfo.name}}</view>
+      <view class='good-desc' wx:if='{{goodDetail.basicInfo.characteristic.length > 0}}'>{{goodDetail.basicInfo.characteristic}}</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}} 积分奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}}元 现金奖励</view>
+      <view class="goods-info-fx">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+        <button open-type="share">分享</button>
+        <text>分享有赏</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class GoodDeatail extends wepy.page {
+  config = {
+    navigationBarTitleText: '商品详情'
+  }
+  data = {
+    goodDetail: [],
+    buyNumMax: 0,
+    newPrice: 0,
+    oldPrice: 0,
+    reputation: '',
+    videoId: '',
+    videoMp4Src: '',
+    sourceLength: 0,
+    swiperCurrent: 0
+  }
+  onLoad(e) {
+    const that = this
+    //获取商品详情
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/detail',
+      data: {
+        id: e.id
+      },
+      success: function (res) {
+        console.log(res.data.data)
+        that.goodDetail = res.data.data
+        that.newPrice = res.data.data.basicInfo.minPrice
+        that.oldPrice = res.data.data.basicInfo.originalPrice
+        that.buyNumMax = res.data.data.basicInfo.stores
+        that.sourceLength = res.data.data.pics.length
+        that.videoId = res.data.data.basicInfo.videoId
+        that.$apply()
+        // WxParse.wxParse('article', 'html', res.data.data.content, that, 5)
+    //获取商品视频
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/media/video/detail',
+          data: {
+            videoId: that.videoId
+          },
+          success: function (res) {
+            if (res.data.code == 0) {
+              that.videoMp4Src = res.data.data.fdMp4
+              that.sourceLength = that.sourceLength + 1
+              that.$apply()
+            }
+          }
+        })
+      }
+    })
+    //获取商品评价
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/reputation',
+      data: {
+        goodsId: e.id
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          that.reputation = res.data.data
+          that.$apply()
+        }
+      }
+    })
+  }
+  methods = {
+    swiperChange(e) {
+      this.swiperCurrent = e.detail.current
+    }
+  }
+}
+</script>
