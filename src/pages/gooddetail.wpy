@@ -1,42 +1,105 @@
 <style lang='less'>
+.goodDetail-container {
+  background: #efefef;
+}
 .swiper-container {
   width: 750rpx;
   position: relative;  
+  .swiper_box {
+    width: 100%;
+    height:748rpx;
+  }
+  swiper-item {
+    image {
+      width: 100%;
+      display: inline-block;
+      overflow: hidden;
+      height:748rpx;
+    }
+    video {
+      width: 100%;
+      height: 748rpx;
+    }
+  }
+  .dots {
+    position: absolute;  
+    left: 0;  
+    right: 0;  
+    bottom: 20rpx;  
+    display: flex;  
+    justify-content: center;
+    .dot {
+      margin: 0 8rpx;  
+      width: 14rpx;  
+      height: 14rpx;  
+      background: #fff;  
+      border-radius: 50%;  
+      transition: all .6s;  
+      opacity: .5;
+    }
+    .dot.active {
+      width: 14rpx;  
+      opacity: 1;
+    }
+  }
 }
-.swiper_box {
-  width: 100%;
-  height:748rpx;
-}
-swiper-item image {
-  width: 100%;
-  display: inline-block;
-  overflow: hidden;
-  height:748rpx;
-}
-swiper-item video {
-  width: 100%;
-  height: 748rpx;
-}
-.swiper-container .dots{  
-  position: absolute;  
-  left: 0;  
-  right: 0;  
-  bottom: 20rpx;  
-  display: flex;  
-  justify-content: center;  
-}  
-.swiper-container .dots .dot{  
-  margin: 0 8rpx;  
-  width: 14rpx;  
-  height: 14rpx;  
-  background: #fff;  
-  border-radius: 50%;  
-  transition: all .6s;  
-  opacity: .5;
-}  
-.swiper-container .dots .dot.active{  
-  width: 14rpx;  
-  opacity: 1;
+.good-info {
+  padding: 20rpx;
+  position: relative;
+  background: #fff;
+  .good-title {
+    padding-top: 10rpx;
+    font-size: 36rpx;
+    width: 80%;
+  }
+  .good-price {
+    margin-top: 10rpx;
+    font-family: bold;
+    font-size: 32rpx;
+    view {
+      display: inline-block;
+    }
+    .newPrice {
+      margin-left: 32rpx;
+      view:nth-child(2) {
+        margin-left: 16rpx;
+      }
+    }
+  }
+  .good-share {
+    color: #F63637;
+    font-size: 28rpx;
+    margin-top: 10rpx;
+  }
+  .goods-info-fx {
+    position: absolute;
+    top: 30rpx;
+    right: 20rpx;
+    text-align: center;
+    width: 120rpx;
+    button {
+      position:absolute;
+      width:50px;
+      height:60px;
+      top:0;
+      left:0;
+      z-index:2;
+      opacity:0;
+    }
+    text {
+      position:absolute;
+      top:46rpx;
+      left:4rpx;
+      z-index:1;
+      font-size:10px;
+      text-align:center;
+      font-size: 26rpx;
+      color: #666;
+    }
+    i {
+      font-size: 36rpx;
+    }
+  }
 }
 </style>
 
@@ -61,38 +124,47 @@ swiper-item video {
     </view>
     <view class='good-info'>
       <view class='good-title'>{{goodDetail.basicInfo.name}}</view>
-      <view class='good-desc' wx:if='{{goodDetail.basicInfo.characteristic.length > 0}}'>{{goodDetail.basicInfo.characteristic}}</view>
-      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}} 积分奖励</view>
-      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有赏，好友下单后可得 {{goodsDetail.basicInfo.commission}}元 现金奖励</view>
+      <view class='good-price'>
+        <view class='oldPrice'>零售价<view style='color: #777'>￥{{oldPrice}}</view></view>
+        <view class='newPrice'>拼团价<view style='color: #777'>￥{{newPrice}}</view><view style='color: red'>(3件成团)</view></view>
+      </view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有礼，好友下单后可得{{goodsDetail.basicInfo.commission}} 积分奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有礼，好友下单后可得{{goodsDetail.basicInfo.commission}}元 现金奖励</view>
       <view class="goods-info-fx">
         <i class="fa fa-share-alt" aria-hidden="true"></i>
         <button open-type="share">分享</button>
-        <text>分享有赏</text>
+        <text>分享有礼</text>
       </view>
     </view>
+    <reputation></reputation>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import Reputation from '@/components/reputation'
 
 export default class GoodDeatail extends wepy.page {
   config = {
     navigationBarTitleText: '商品详情'
+  }
+  components = {
+    reputation: Reputation
   }
   data = {
     goodDetail: [],
     buyNumMax: 0,
     newPrice: 0,
     oldPrice: 0,
-    reputation: '',
     videoId: '',
     videoMp4Src: '',
     sourceLength: 0,
-    swiperCurrent: 0
+    swiperCurrent: 0,
+    goodId: ''
   }
   onLoad(e) {
     const that = this
+    that.$broadcast('goodId', e.id)
     //获取商品详情
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/detail',
@@ -100,7 +172,6 @@ export default class GoodDeatail extends wepy.page {
         id: e.id
       },
       success: function (res) {
-        console.log(res.data.data)
         that.goodDetail = res.data.data
         that.newPrice = res.data.data.basicInfo.minPrice
         that.oldPrice = res.data.data.basicInfo.originalPrice
@@ -125,19 +196,20 @@ export default class GoodDeatail extends wepy.page {
         })
       }
     })
-    //获取商品评价
-    wepy.request({
-      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/reputation',
-      data: {
-        goodsId: e.id
-      },
+  }
+  onShareAppMessage() {
+    return {
+      title: this.goodDetail.basicInfo.name,
+      path: '/pages/goods-details/index?id=' + this.goodDetail.basicInfo.id + '&inviter_id=' + this.$parent.globalData.uid,
       success: function (res) {
-        if (res.data.code == 0) {
-          that.reputation = res.data.data
-          that.$apply()
-        }
+        // 转发成功
+        console.log('成功', res)
+      },
+      fail: function (res) {
+        // 转发失败
+        console.log('失败', res)
       }
-    })
+    }
   }
   methods = {
     swiperChange(e) {

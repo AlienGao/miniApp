@@ -16,6 +16,9 @@
 .fa-share-alt:before {
   content: "\f1e0";
 }
+.fa-angle-right:before {
+  content: "\f105";
+}
 .container {
   height: 100%;
   display: flex;

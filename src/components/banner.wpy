@@ -98,7 +98,6 @@ export default class Banners extends wepy.component {
       this.swiperCurrent = e.detail.current
     },
     toGoodDetail(e) {
-      console.log(e)
       if(e.currentTarget.dataset.id !== 0) {
         wx.navigateTo({
           url: '/pages/gooddetail?id=' + e.currentTarget.dataset.id
