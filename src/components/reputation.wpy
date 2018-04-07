@@ -2,8 +2,9 @@
   .reputation-container {
     margin-top: 20rpx;
     background: #fff;
+    padding-bottom: 30rpx;
     .title {
-      padding: 30rpx 20rpx 14px;
+      padding: 30rpx 20rpx 10px;
       display: flex;
       justify-content: space-between;
       font-size: 30rpx;
@@ -16,22 +17,12 @@
     }
     .content {
       padding-left: 20rpx;
-      .options {
-        
-      }
-      .user {
-        image {
-          border-radius: 50%;
-          width: 60rpx;
-          height: 60rpx;
-        }
-        text {
-          font-size: 30rpx;
-          color: #666;
-          vertical-align: 16rpx;
-          margin-left: 10rpx;
-        }
-      }
+    }
+    .noReputation {
+      font-size: 26rpx;
+      color: #dfdfdf;
+      text-align: center;
+      line-height: 40rpx;
     }
   }
 </style>
@@ -40,24 +31,13 @@
   <view class='reputation-container'>
     <view class='title'>
       <view>宝贝评价({{reputation.length}})</view>
-      <view class='lookall'>查看全部<i class='fa fa-angle-right'></i></view>
+      <view class='lookall' @tap='lookall'>查看全部<i class='fa fa-angle-right'></i></view>
     </view>
-    <view class='content' wx:if='{{reputation.length > 0}}'>
-      <view class='options'>
-        <view>好评</view>
-        <view>中评</view>
-        <view>差评</view>
-      </view>
-      <view class='user'>
-        <image src='{{reputation[0].user.avatarUrl}}' />
-        <text>{{reputation[0].user.nick}}</text>
-      </view>
-      <view>
-        {{reputation[0].goods.goodReputationRemark}}
-      </view>
-      {{reputation}}
+    <view class='content'>
+      <reputation-chioces></reputation-chioces>
+      <reputation-content></reputation-content>
     </view>
-    <view wx:if='{{reputation.length === 0}}'>
+    <view class='noReputation' wx:if='{{reputation.length === 0}}'>
       暂无评价
     </view>
   </view>
@@ -65,33 +45,23 @@
 
 <script>
 import wepy from 'wepy'
+import ReputationChioces from '@/components/reputation-chioces'
+import ReputationContent from '@/components/reputation-content'
 
 export default class Reputation extends wepy.component {
-  data = {
-    avatar: '',
-    name: '',
-    content: '',
-    reputation: [],
-    goodId: ''
+  components = {
+    'reputation-chioces': ReputationChioces,
+    'reputation-content': ReputationContent
   }
-  events = {
-    'goodId': (id) => {
-      this.goodId = id
-      this.$apply()
-      const that = this
-      wepy.request({
-        url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
-        data: {
-          goodsId: that.goodId
-        },
-        success: function (res) {
-          if(res.data.code == 0) {
-            that.reputation = res.data.data
-            that.$apply()
-          }
-        }
+  methods = {
+    lookall() {
+      wx.navigateTo({
+        url: '/pages/all-reputation'
       })
     }
+  }
+  events = {
+
   }
 }
 </script>

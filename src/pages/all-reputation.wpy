@@ -1,0 +1,23 @@
+<style lang='less'>
+
+</style>
+
+<template>
+  <view class='all-reputation'>
+    <reputation></reputation>
+  </view>  
+</template>
+
+<script>
+import wepy from 'wepy'
+import Reputation from '@/components/reputation'
+
+export default class AllReputation extends wepy.page {
+  config = {
+    navigationBarTitleText: '所有评价'
+  }
+  components = {
+    reputation: Reputation
+  }
+}
+</script>

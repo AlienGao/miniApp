@@ -1,0 +1,59 @@
+<style lang='less'>
+.options {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10rpx;
+  view {
+    padding: 6rpx 20rpx;
+    border-radius: 20rpx;
+    background: rgba(246, 54, 55, 0.2); 
+    font-size: 24rpx;
+    text-align: center;
+    line-height: 36rpx;
+    margin-right: 22rpx;
+    color: #666;
+  }
+  .active {
+    background: rgba(246, 54, 55, 0.4);
+  }
+}
+</style>
+
+<template>
+  <view class='options'>
+    <view @tap="chooseIndex('all')" class="{{reputationIndex == 'all' ? 'active' : ''}}">全部({{reputation.length > 0 ? reputation.length : 0}})</view>
+    <view @tap="chooseIndex('2')" class="{{reputationIndex == '2' ? 'active' : ''}}">好评({{reputationtwo.length > 0 ? reputationtwo.length : 0}})</view>
+    <view @tap="chooseIndex('1')" class="{{reputationIndex == '1' ? 'active' : ''}}">中评({{reputationone.length > 0 ? reputationone.length : 0}})</view>
+    <view @tap="chooseIndex('0')" class="{{reputationIndex == '0' ? 'active' : ''}}">差评({{reputationzero.length > 0 ? reputationzero.length : 0}})</view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class ReputationChioces extends wepy.component {
+  data = {
+    reputationIndex: 'all',
+    reputation: [],
+    reputationtwo: [],
+    reputationone: [],
+    reputationzero: []
+  }
+  props = {
+    showAll: {
+      type: Boolean,
+      default: false
+    }
+  }
+  methods = {
+    chooseIndex(index) {
+      this.reputationIndex = index
+      console.log(this.reputationIndex)
+      // this.$invoke('../reputation/reputation-content', 'getContent', index, this.showAll)
+    },
+    getlength(data) {
+      console.log(data)
+    }
+  }
+}
+</script>
+

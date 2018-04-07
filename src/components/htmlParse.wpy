@@ -1,0 +1,70 @@
+<style lang='less'>
+  @import "../wxParse/wxParse.wxss";
+  .wxParse-img {
+    margin: 0 auto;
+    width: 100%;
+    min-height: 200rpx;
+    display: block;
+    background-color: transparent;
+  }
+</style>
+
+<template>
+  <import src="../wxParse/wxParse.wxml" />
+  <block wx:for="{{htmlParserTpl.nodes}}" wx:key="{{index}}">
+    <template is="wxParse0" data="{{item}}"></template>
+  </block>
+</template>
+
+<script>
+import wepy from 'wepy';
+import WxParse from '../wxParse/wxParse';
+
+export default class HtmlParse extends wepy.component{
+  props = {
+    parserName: {
+      type:String,
+      default: "htmlParserName"
+    },
+    parserContent:{
+      type: String,
+      default: "<p style='font-size: 32rpx; padding: 30rpx 0; text-align: center;'>没有任何内容</p>"
+    },
+    parserType:{
+      type:String,
+      default: "html"
+    },
+    parserPadding:{
+      type: Number,
+      default: 0
+    }
+  };
+  data = {
+    htmlParserTpl: {}
+  };
+  events = {
+    'htmlParser-broadcast': ($event, ...args) => {
+    },
+  };
+  methods = {
+    htmlParserNotice(){
+      this.htmlParse();
+    }
+  };
+  async onLoad(){
+    this.htmlParse();
+  };
+  wxParseImgLoad(image){
+    let imgInfo = image.detail;
+  };
+  htmlParse(){
+    try{
+      let content = WxParse.wxParse(this.parserName, this.parserType, this.parserContent || this.props.parserContent.default, this, this.parserPadding)
+      this.htmlParserTpl = content[this.parserName];
+      this.$apply()
+    }catch (e){
+      console.warn("kinerHtmlParser:","没有任何内容需要转换",e);
+    }
+  }
+}
+</script>

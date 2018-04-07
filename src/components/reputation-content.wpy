@@ -1,0 +1,122 @@
+<style lang='less'>
+.user {
+  image {
+    border-radius: 50%;
+    width: 60rpx;
+    height: 60rpx;
+  }
+  text {
+    font-size: 30rpx;
+    color: #666;
+    vertical-align: 16rpx;
+    margin-left: 10rpx;
+  }
+  .time {
+    color: #cdcdcd;
+    font-size: 24rpx;
+  }
+}
+.goodReputation {
+  font-size: 26rpx;
+}
+</style>
+
+<template>
+  <view class='reputation-content' @tap='lookall'>
+    <view class='user'>
+      <image src='{{filterData.avatarUrl}}' />
+      <text>{{filterData.nick}}</text>
+      <text class='time'>{{filterData.reputationDate}}</text>
+    </view>
+    <view class='goodReputation'>
+      {{filterData.goodReputationRemark}}
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy' 
+
+export default class ReputationContent extends wepy.component {
+  data = {
+    reputation: null,
+    content: [],
+    filterData: null
+  }
+  events = {
+    'goodId': (id) => {
+      const that = this
+      wepy.request({
+        url: 'https://api.it120.cc/' + that.$parent.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
+        data: {
+          goodsId: id
+        },
+        success: function (res) {
+          that.reputation = res.data.data
+          that.$apply()
+          that.getContent('all', false)
+          that.$apply()
+        }
+      })
+    }
+  }
+  methods = {
+    lookall() {
+      wx.navigateTo({
+        url: '/pages/all-reputation'
+      })
+    }
+  }
+  // type查看选项，showAll是否是查看所有评论页
+  getContent(type=0, showAll=false) {
+    const that = this
+    // 存在reputation
+    if (this.reputation.length !== 0) {
+      let array = []
+      let type2 = []
+      let type1 = []
+      let type0 = []
+      this.reputation.map((item) => {
+        if (item.goods.goodReputation == 2) {
+          type2.push(item)
+        } else if (item.goods.goodReputation == 1) {
+          type1.push(item)
+        } else {
+          type0.push(item)
+        }
+      })
+      array.push(this.reputation.length, type2.length, type1.length, type0.length)
+      console.log(array, that)
+      that.$invoke('./reputation/ReputationChioces', 'getlength', '')
+      that.apply()
+      // 不是查看所有评论
+      if(!showAll) {
+        let user = {}
+        // 查看所有选项
+        if (type === 'all') {
+          user.avatarUrl = this.reputation[0].user.avatarUrl
+          user.nick = this.reputation[0].user.nick
+          user.reputationDate = this.reputation[0].goods.dateReputation.slice(0, 10)
+          user.goodReputationRemark = this.reputation[0].goods.goodReputationRemark
+          this.content.push(user)
+          // 查看好中差选项
+        } else {
+          this.reputation.map((item) => {
+            if(item.goods.goodReputation == type) {
+              that.content.push({
+                avatarUrl: item.user.avatarUrl,
+                nick: item.user.nick,
+                reputationDate: item.goods.dateReputation.slice(0, 10),
+                goodReputationRemark: item.goods.goodReputationRemark
+              })                
+            }
+          })
+        }
+        this.filterData = this.content[0]
+        this.$apply()
+        console.log('内容', this.content)
+      }
+    }
+  }
+}
+</script>

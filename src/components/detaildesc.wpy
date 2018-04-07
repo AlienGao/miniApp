@@ -1,0 +1,59 @@
+<style lang='less'>
+.detail-container {
+  margin-top: 20rpx;
+  .title {
+    text-align: center;
+    font-size: 28rpx;
+    color: #999;
+    margin-bottom: 20rpx;
+    .line {
+      width: 90rpx;
+      height: 2rpx;
+      background: #999;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
+}
+</style>
+
+<template>
+  <view class='detail-container'>
+    <view class='title'>
+      <i class='line'></i>
+      <i class='fa fa-picture-o' style='margin: 0rpx 10rpx'></i>详情
+      <i class='line'></i>
+    </view>
+    <htmlparse parserName='article' :parserContent.sync='wxParseData'></htmlparse>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import HtmlParse from '@/components/htmlParse'
+
+export default class DeatilDesc extends wepy.component {
+  data = {
+    wxParseData: null
+  }
+  components = {
+    htmlparse: HtmlParse
+  }
+  events = {
+    'goodId': (id) => {
+      const that = this
+      wepy.request({
+        url: 'https://api.it120.cc/'+ that.$parent.$parent.globalData.subDomain +'/shop/goods/detail',
+        data: {
+          id: id
+        },
+        success: function (res) {
+          that.wxParseData = res.data.data.content
+          that.$apply()
+          that.$invoke('htmlparse', 'htmlParserNotice', '')
+        }
+      })
+    }
+  }
+}
+</script>

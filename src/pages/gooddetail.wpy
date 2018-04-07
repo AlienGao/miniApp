@@ -107,7 +107,7 @@
   <view class='goodDetail-container'>
     <view class='swiper-container'>
       <swiper class='swiper_box' autoplay='{{true}}' interval='{{3000}}' duration='{{1500}}' bindchange='swiperChange'>
-        <swiper-item wx:if='{{goodDetail.basicInfo.videoId}}'>
+        <swiper-item wx:if='{{goodDetail.basicInfo.videoId.length > 0}}'>
           <video src='{{videoMp4Src}}' autoplay='{{false}}' loop='{{false}}' objectFit='fill'></video>
         </swiper-item>
         <repeat for='{{goodDetail.pics}}' key='index'>
@@ -137,19 +137,22 @@
       </view>
     </view>
     <reputation></reputation>
+    <detaildesc></detaildesc>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
 import Reputation from '@/components/reputation'
+import DetailDesc from '@/components/detaildesc'
 
 export default class GoodDeatail extends wepy.page {
   config = {
     navigationBarTitleText: '商品详情'
   }
   components = {
-    reputation: Reputation
+    reputation: Reputation,
+    detaildesc: DetailDesc
   }
   data = {
     goodDetail: [],
@@ -160,7 +163,6 @@ export default class GoodDeatail extends wepy.page {
     videoMp4Src: '',
     sourceLength: 0,
     swiperCurrent: 0,
-    goodId: ''
   }
   onLoad(e) {
     const that = this
