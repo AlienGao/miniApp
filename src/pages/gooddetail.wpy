@@ -1,7 +1,4 @@
 <style lang='less'>
-.goodDetail-container {
-  background: #efefef;
-}
 .swiper-container {
   width: 750rpx;
   position: relative;  
@@ -54,10 +51,10 @@
   }
   .good-price {
     margin-top: 10rpx;
-    font-family: bold;
     font-size: 32rpx;
     view {
       display: inline-block;
+      vertical-align: bottom;
     }
     .newPrice {
       margin-left: 32rpx;
@@ -71,12 +68,18 @@
     font-size: 28rpx;
     margin-top: 10rpx;
   }
+  // 分享
   .goods-info-fx {
     position: absolute;
     top: 30rpx;
     right: 20rpx;
     text-align: center;
     width: 120rpx;
+    height: 80rpx;
+    image {
+      width:40rpx;
+      height:40rpx;
+    }
     button {
       position:absolute;
       width:50px;
@@ -90,7 +93,6 @@
       position:absolute;
       top:46rpx;
       left:4rpx;
-      z-index:1;
       font-size:10px;
       text-align:center;
       font-size: 26rpx;
@@ -99,6 +101,105 @@
     i {
       font-size: 36rpx;
     }
+  }
+}
+.reputation-container {
+  margin-top: 20rpx;
+  background: #fff;
+  padding-bottom: 30rpx;
+  .title {
+    padding: 30rpx 20rpx 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 30rpx;
+    .lookall {
+      color: rgba(246, 54, 55, 0.8);
+      i {
+        margin-left: 16rpx;
+      }
+    }
+  }
+  .content {
+    padding-left: 20rpx;
+  }
+  .noReputation {
+    font-size: 26rpx;
+    color: #c7c7c7;
+    text-align: center;
+    line-height: 40rpx;
+  }
+}
+.recommend {
+  margin-top: 20rpx;
+  padding-bottom: 105rpx;
+  .title {
+    text-align: center;
+    font-size: 28rpx;
+    color: #999;
+    .line {
+      width: 90rpx;
+      height: 2rpx;
+      background: #999;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
+}
+.tabBar {
+  position: fixed;
+  bottom: 0rpx;
+  left: 0rpx;
+  right: 0rpx;
+  width: 100%;
+  font-size: 28rpx;
+  display: flex;
+  background: #fff;
+  text-align: center;
+  height: 105rpx;
+  .button-group {
+    display: flex;
+    width: 48%;
+    border-top: 1px solid #ccc;
+    view{
+      width: 33%;
+      border-right: 1px solid #ccc;
+      padding: 10rpx;
+      image {
+        margin:0 auto 10rpx;
+        width:48rpx;
+        height:42rpx;
+        display:block;
+      }
+    }
+    button {
+      font-size:28rpx;
+      line-height:1;
+      padding:10rpx;
+      width: 33%;
+      border: none;
+      border-right: 1px solid #ccc;
+      border-radius: 0;
+      image {
+        margin:0 auto 10rpx;
+        width:54rpx;
+        height:48rpx;
+        display:block;
+      }
+    }
+  }
+  .shop-cart {
+    width: 30%;
+    line-height: 105rpx;
+    font-size: 32rpx;
+    color: #fff;
+    background: #FF622B;
+  }
+  .buy-now {
+    width: 22%;
+    line-height: 105rpx;
+    font-size: 32rpx;
+    color: #fff;
+    background: #FF3E4C;
   }
 }
 </style>
@@ -128,31 +229,81 @@
         <view class='oldPrice'>零售价<view style='color: #777'>￥{{oldPrice}}</view></view>
         <view class='newPrice'>拼团价<view style='color: #777'>￥{{newPrice}}</view><view style='color: red'>(3件成团)</view></view>
       </view>
-      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有礼，好友下单后可得{{goodsDetail.basicInfo.commission}} 积分奖励</view>
-      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有礼，好友下单后可得{{goodsDetail.basicInfo.commission}}元 现金奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有礼，好友下单后可得{{goodDetail.basicInfo.commission}}积分奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有礼，好友下单后可得{{goodDetail.basicInfo.commission}}元现金奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 0}}">此宝贝暂未参加分享优惠购活动</view>
       <view class="goods-info-fx">
-        <i class="fa fa-share-alt" aria-hidden="true"></i>
+        <image src='../images/Share.png' />
         <button open-type="share">分享</button>
         <text>分享有礼</text>
       </view>
     </view>
-    <reputation></reputation>
+    <view class='reputation-container'>
+      <view class='title'>
+        <view>宝贝评价({{reputation}})</view>
+        <view wx:if='{{reputation > 0}}' class="lookall" @tap='lookall'>查看全部<i class='fa fa-angle-right'></i></view>
+      </view>
+      <view class='content' wx:if='{{reputation > 0}}'>
+        <reputation-chioces></reputation-chioces>
+        <reputation-content :goodId.sync='goodId'></reputation-content>
+      </view>
+      <view class='noReputation' wx:if='{{reputation == 0}}'>
+        <i class='fa fa-commenting-o' style='margin-right: 10rpx'></i>暂无评价
+      </view>
+    </view>
     <detaildesc></detaildesc>
+    <view class='recommend'>
+      <view class='title'>
+        <i class='line'></i>
+        <i class='fa fa-shopping-bag' style='margin: 0rpx 10rpx'></i>猜你喜欢
+        <i class='line'></i>
+      </view>
+      <recommend></recommend>
+    </view>
+    <view class='tabBar'>
+      <view class='button-group'>
+        <view @tap='toIndex'>
+          <image src='../images/home.png' />
+          <text>首页</text>
+        </view>
+        <button open-type="contact" plain='{{true}}'>
+          <image src='../images/servicer.png'/>
+          <text>客服</text>
+        </button>
+        <view @tap='toggleCollect'>
+          <image src="../images/{{isCollection ? 'collection_active' : 'collection'}}.png"/>
+          <text>收藏</text>
+        </view>
+      </view>
+      <view class='shop-cart'>加入购物车</view>
+      <view class='buy-now' @tap='buyNow'>立即购买</view>
+    </view>
+    <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom">
+      <view class="popup__content">Hello World</view>
+    </wxc-popup>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
-import Reputation from '@/components/reputation'
 import DetailDesc from '@/components/detaildesc'
+import ReputationChioces from '@/components/reputation-chioces'
+import ReputationContent from '@/components/reputation-content'
+import Recommend from '@/components/goods'
 
 export default class GoodDeatail extends wepy.page {
   config = {
-    navigationBarTitleText: '商品详情'
+    navigationBarTitleText: '商品详情',
+    usingComponents: {
+      'wxc-elip': '../../packages/@minui/wxc-elip/dist/index',
+      'wxc-popup': '../../packages/@minui/wxc-popup/dist/index'
+    }
   }
   components = {
-    reputation: Reputation,
-    detaildesc: DetailDesc
+    detaildesc: DetailDesc,
+    'reputation-chioces': ReputationChioces,
+    'reputation-content': ReputationContent,
+    recommend: Recommend
   }
   data = {
     goodDetail: [],
@@ -163,9 +314,14 @@ export default class GoodDeatail extends wepy.page {
     videoMp4Src: '',
     sourceLength: 0,
     swiperCurrent: 0,
+    reputation: 0,
+    goodId: '',
+    isCollection: false
   }
   onLoad(e) {
     const that = this
+    that.goodId = e.id
+    that.$apply()
     that.$broadcast('goodId', e.id)
     //获取商品详情
     wepy.request({
@@ -198,6 +354,10 @@ export default class GoodDeatail extends wepy.page {
         })
       }
     })
+    // 商品评价
+    setTimeout(function(){
+      that.$invoke('reputation-content', 'getContent', 'all', 'false')
+    }, 500)
   }
   onShareAppMessage() {
     return {
@@ -216,6 +376,31 @@ export default class GoodDeatail extends wepy.page {
   methods = {
     swiperChange(e) {
       this.swiperCurrent = e.detail.current
+    },
+    lookall() {
+      if (this.reputation > 0) {
+        wx.navigateTo({
+          url: '/pages/all-reputation?id=' + this.goodId
+        })
+      }
+    },
+    toggleCollect() {
+      this.isCollection = !this.isCollection
+    },
+    toIndex() {
+      wx.switchTab({
+        url: '/pages/index',
+      })
+    },
+    buyNow() {
+      let popupComponent = this.selectComponent('.J_Popup');
+      console.log(popupComponent)
+      popupComponent && popupComponent.show();
+    }
+  }
+  events = {
+    getReputation(data) {
+      this.reputation = data
     }
   }
 }

@@ -1,0 +1,25 @@
+<style lang='less'>
+</style>
+
+<template>
+  <view class='specialPrice-container'>
+    <goods></goods>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import Goods from '@/components/goods'
+
+export default class SpecialPrice extends wepy.page {
+  config = {
+    navigationBarTitleText: '特卖专区',
+    usingComponents: {
+      'wxc-elip': '../../packages/@minui/wxc-elip/dist/index'
+    }
+  }
+  components = {
+    goods: Goods
+  }
+}
+</script>

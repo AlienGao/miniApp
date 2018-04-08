@@ -1,0 +1,76 @@
+<style lang='less'>
+.hotgoods-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 20rpx;
+  .single-container {
+    width: 48%;
+    background: #fff;
+    margin-bottom: 20rpx;
+    .describe {
+      padding: 10rpx;
+      text {
+        line-height: 32rpx;
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <view class='hotgoods-container'>
+    <repeat for='{{goods}}' index='index' item='item'>
+      <view class='single-container' @tap='toDetail({{item}})'>
+        <hot-good>
+          <image src='{{item.pic}}' />
+        </hot-good>
+        <view class='describe'>
+          <wxc-elip style='font-size: 28rpx;line-height: 36rpx;'>{{item.name}}</wxc-elip>
+          <text style='color: #f00;font-size: 28rpx;margin-right: 20rpx'>￥{{item.minPrice}}</text><text style='color: #a0a0a0;font-size: 24rpx'>销量{{item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+import HotGood from '@/components/hotgood'
+
+export default class HotGoods extends wepy.page {
+  config = {
+    navigationBarTitleText: '热卖专区',
+    usingComponents: {
+      'wxc-elip': '../../packages/@minui/wxc-elip/dist/index'
+    }
+  }
+  components = {
+    'hot-good': HotGood
+  }
+  data = {
+    goods: []
+  }
+  onLoad() {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/'+ this.$parent.globalData.subDomain +'/shop/goods/list',
+      success: function (res) {
+        res.data.data.map((item) => {
+          if(item.recommendStatus === 1) {
+            that.goods.push(item)
+          }
+        })
+        that.$apply()
+      }
+    })
+  }
+  methods = {
+    toDetail(item) {
+      wx.navigateTo({
+        url: '/pages/gooddetail?id=' + item.id
+      })
+    }
+  }
+}
+</script>

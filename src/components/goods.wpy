@@ -1,0 +1,69 @@
+<style lang='less'>
+.goods {
+  padding: 20rpx 20rpx 0rpx 20rpx;
+  display: flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  line-height: 1;
+  .good-container {
+    background: #fff;
+    width: 48%;
+    margin-bottom: 20rpx;
+    image {
+      width: 100%;
+      height: 410rpx;
+    }
+    .describe {
+      padding: 10rpx;
+      text {
+        line-height: 32rpx;
+      }
+    }
+  }
+}
+</style>
+
+<template>
+  <view class='goods'>
+    <repeat for='{{recommend}}' index='index' key='index' item='item'>
+      <view class='good-container' @tap='toDetail({{item}})'>
+        <image src='{{item.pic}}' class='good-image'/>
+        <view class='describe'>
+          <wxc-elip style='font-size: 28rpx;line-height: 36rpx;'>{{item.name}}</wxc-elip>
+          <text style='color: #f00;font-size: 28rpx;margin-right: 20rpx'>￥{{item.minPrice}}</text><text style='color: #a0a0a0;font-size: 24rpx'>销量{{item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class Goods extends wepy.component {
+  data = {
+    recommend: null
+  }
+  onLoad() {
+    const that = this
+    // 获取类似产品
+    wepy.request({
+      url: 'https://api.it120.cc/'+ that.$parent.$parent.globalData.subDomain +'/shop/goods/list',
+      success: function(res) {
+        that.recommend = res.data.data
+        that.$apply()
+      }
+    })
+  }
+  methods = {
+    toDetail(e) {
+      if(e.id !== 0) {
+        wx.navigateTo({
+          url: '/pages/gooddetail?id=' + e.id
+        })
+      }
+    }
+  }
+}
+</script>
+

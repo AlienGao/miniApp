@@ -22,14 +22,28 @@
 </style>
 
 <template>
-  <view class='reputation-content' @tap='lookall'>
-    <view class='user'>
-      <image src='{{filterData.avatarUrl}}' />
-      <text>{{filterData.nick}}</text>
-      <text class='time'>{{filterData.reputationDate}}</text>
+  <view class='reputation-content'>
+    <view @tap='lookall' wx:if="{{!isShowAll}}">
+      <view class='user'>
+        <image src='{{filterData.avatarUrl}}' />
+        <text>{{filterData.nick}}</text>
+        <text class='time'>{{filterData.reputationDate}}</text>
+      </view>
+      <view class='goodReputation'>
+        {{filterData.goodReputationRemark}}
+      </view>
     </view>
-    <view class='goodReputation'>
-      {{filterData.goodReputationRemark}}
+    <view wx:if='{{isShowAll}}'>
+      <repeat for='{{content}}' key='index' index='index' item='item'>
+        <view class='user'>
+          <image src='{{item.avatarUrl}}' />
+          <text>{{item.nick}}</text>
+          <text class='time'>{{item.reputationDate}}</text>
+        </view>
+        <view class='goodReputation'>
+            {{item.goodReputationRemark}}
+        </view>
+      </repeat>
     </view>
   </view>
 </template>
@@ -41,37 +55,45 @@ export default class ReputationContent extends wepy.component {
   data = {
     reputation: null,
     content: [],
-    filterData: null
+    filterData: null,
+    isShowAll: false
   }
-  events = {
-    'goodId': (id) => {
-      const that = this
-      wepy.request({
-        url: 'https://api.it120.cc/' + that.$parent.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
-        data: {
-          goodsId: id
-        },
-        success: function (res) {
-          that.reputation = res.data.data
-          that.$apply()
-          that.getContent('all', false)
-          that.$apply()
-        }
-      })
+  props = {
+    goodId: String
+  }
+  watch = {
+    goodId(newValue, oldValue) {
+      if(newValue !== oldValue) {
+        const that = this
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
+          data: {
+            goodsId: newValue
+          },
+          success: function (res) {
+            that.reputation = res.data.data
+            that.$apply()
+          }
+        })
+      }
     }
   }
   methods = {
     lookall() {
       wx.navigateTo({
-        url: '/pages/all-reputation'
+        url: '/pages/all-reputation?id=' + this.goodId
       })
     }
   }
   // type查看选项，showAll是否是查看所有评论页
-  getContent(type=0, showAll=false) {
+  getContent(type='all', showAll='false') {
     const that = this
+    // 每次筛选初始化
+    that.content = []
+    that.filterData = null
+    that.isShowAll = showAll == 'false' ? false : true
     // 存在reputation
-    if (this.reputation.length !== 0) {
+    if (this.reputation && this.reputation.length !== 0) {
       let array = []
       let type2 = []
       let type1 = []
@@ -86,11 +108,9 @@ export default class ReputationContent extends wepy.component {
         }
       })
       array.push(this.reputation.length, type2.length, type1.length, type0.length)
-      console.log(array, that)
-      that.$invoke('./reputation/ReputationChioces', 'getlength', '')
-      that.apply()
+      that.$invoke('../reputation-chioces', 'getlength', array)
       // 不是查看所有评论
-      if(!showAll) {
+      if(!that.isShowAll) {
         let user = {}
         // 查看所有选项
         if (type === 'all') {
@@ -101,7 +121,7 @@ export default class ReputationContent extends wepy.component {
           this.content.push(user)
           // 查看好中差选项
         } else {
-          this.reputation.map((item) => {
+          that.reputation.map((item) => {
             if(item.goods.goodReputation == type) {
               that.content.push({
                 avatarUrl: item.user.avatarUrl,
@@ -112,9 +132,21 @@ export default class ReputationContent extends wepy.component {
             }
           })
         }
-        this.filterData = this.content[0]
-        this.$apply()
-        console.log('内容', this.content)
+        that.filterData = that.content[0]
+        that.$apply() 
+        // 查看所有评论
+      } else {
+        that.reputation.map((item) => {
+          if(item.goods.goodReputation == type || type === 'all') {
+            that.content.push({
+              avatarUrl: item.user.avatarUrl,
+              nick: item.user.nick,
+              reputationDate: item.goods.dateReputation.slice(0, 10),
+              goodReputationRemark: item.goods.goodReputationRemark
+            })
+          }
+        })
+        that.$apply()
       }
     }
   }

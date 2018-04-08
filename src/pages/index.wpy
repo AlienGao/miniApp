@@ -19,10 +19,6 @@
   <view class="container">
     <banner></banner>
     <coupons></coupons>
-    <!-- <view class="userinfo" @tap="handleViewTap">
-      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
-      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
-    </view> -->
     <toast />
   </view>
 </template>

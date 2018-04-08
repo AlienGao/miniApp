@@ -21,10 +21,10 @@
 
 <template>
   <view class='options'>
-    <view @tap="chooseIndex('all')" class="{{reputationIndex == 'all' ? 'active' : ''}}">全部({{reputation.length > 0 ? reputation.length : 0}})</view>
-    <view @tap="chooseIndex('2')" class="{{reputationIndex == '2' ? 'active' : ''}}">好评({{reputationtwo.length > 0 ? reputationtwo.length : 0}})</view>
-    <view @tap="chooseIndex('1')" class="{{reputationIndex == '1' ? 'active' : ''}}">中评({{reputationone.length > 0 ? reputationone.length : 0}})</view>
-    <view @tap="chooseIndex('0')" class="{{reputationIndex == '0' ? 'active' : ''}}">差评({{reputationzero.length > 0 ? reputationzero.length : 0}})</view>
+    <view @tap="chooseIndex('all')" class="{{reputationIndex == 'all' ? 'active' : ''}}">全部({{reputation[0] > 0 ? reputation[0] : 0}})</view>
+    <view @tap="chooseIndex('2')" class="{{reputationIndex == '2' ? 'active' : ''}}">好评({{reputation[1] > 0 ? reputation[1] : 0}})</view>
+    <view @tap="chooseIndex('1')" class="{{reputationIndex == '1' ? 'active' : ''}}">中评({{reputation[2] > 0 ? reputation[2] : 0}})</view>
+    <view @tap="chooseIndex('0')" class="{{reputationIndex == '0' ? 'active' : ''}}">差评({{reputation[3] > 0 ? reputation[3] : 0}})</view>
   </view>
 </template>
 
@@ -33,25 +33,22 @@ import wepy from 'wepy'
 export default class ReputationChioces extends wepy.component {
   data = {
     reputationIndex: 'all',
-    reputation: [],
-    reputationtwo: [],
-    reputationone: [],
-    reputationzero: []
+    reputation: []
   }
   props = {
     showAll: {
-      type: Boolean,
-      default: false
+      type: String,
+      default: 'false'
     }
   }
   methods = {
     chooseIndex(index) {
       this.reputationIndex = index
-      console.log(this.reputationIndex)
-      // this.$invoke('../reputation/reputation-content', 'getContent', index, this.showAll)
+      this.$invoke('../reputation-content', 'getContent', index, this.showAll)
     },
     getlength(data) {
-      console.log(data)
+      this.reputation = data
+      this.$emit('getReputation', data[0])
     }
   }
 }

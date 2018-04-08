@@ -1,0 +1,18 @@
+<style lang='less'>
+.sign-container {
+  
+}
+</style>
+
+<template>
+  <view class='sign-container'>
+  </view>  
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class Sign extends wepy.page {
+  
+}
+</script>

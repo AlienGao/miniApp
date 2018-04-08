@@ -1,0 +1,31 @@
+<style lang='less'>
+
+</style>
+
+<template>
+  <view>
+    新人专享
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class NewMember extends wepy.page {
+  config = {
+    navigationBarTitleText: '新人领券中心'
+  }
+  data = {
+    coupons: null
+  }
+  onLoad() {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/coupons',
+      success: function (res) {
+        console.log(res)
+      }
+    })
+  }
+}
+</script>

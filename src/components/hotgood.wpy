@@ -1,0 +1,34 @@
+<style lang='less'>
+.hotgood-container {
+  position: relative;
+  width: 100%;
+  background: #fff;
+  .icon {
+    position: absolute;
+    top: 20rpx;
+    left: 20rpx;
+    display: block;
+    width: 40rpx;
+    height: 40rpx;
+  }
+  image {
+    width: 100%;
+    height: 410rpx;
+  }
+}
+</style>
+
+<template>
+  <view class='hotgood-container'>
+    <image class='icon' src='../images/hot.png' />
+    <slot></slot>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class HotGood extends wepy.component {
+
+}
+</script>

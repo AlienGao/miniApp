@@ -21,7 +21,7 @@
 <template>
   <view class='coupons-container'>
     <repeat for='{{coupons}}' index='index' key='index'>
-      <view class="item">
+      <view class="item" @tap='toCoupons({{index}})'>
         <image src='{{item.picUrl}}_m' />
         <text>{{item.title}}</text>
       </view>
@@ -49,6 +49,23 @@ export default class Coupons extends wepy.component {
         that.$apply()
       }
     })
+  }
+  methods = {
+    toCoupons(index) {
+      if (index == 0) {
+        wx.navigateTo({
+          url: '/pages/newMember'
+        })
+      } else if (index == 1) {
+        wx.navigateTo({
+          url: '/pages/hot-goods'
+        })
+      } else if (index == 2) {
+        wx.navigateTo({
+          url: '/pages/special-price'
+        })
+      } 
+    }
   }
 }
 </script>

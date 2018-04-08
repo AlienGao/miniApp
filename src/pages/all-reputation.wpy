@@ -1,23 +1,62 @@
 <style lang='less'>
-
+.reputation-container {
+  background: #fff;
+  padding-bottom: 30rpx;
+  .title {
+    padding: 30rpx 20rpx 10px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 30rpx;
+    .lookall {
+      color: rgba(246, 54, 55, 0.8);
+      i {
+        margin-left: 16rpx;
+      }
+    }
+  }
+  .content {
+    padding-left: 20rpx;
+  }
+  .noReputation {
+    font-size: 26rpx;
+    color: #dfdfdf;
+    text-align: center;
+    line-height: 40rpx;
+  }
+}
 </style>
 
 <template>
   <view class='all-reputation'>
-    <reputation></reputation>
+    <!-- wepy不能传递布尔值 -->
+    <reputation-chioces showAll='true'></reputation-chioces>
+    <reputation-content :goodId.sync='goodId'></reputation-content>
   </view>  
 </template>
 
 <script>
 import wepy from 'wepy'
-import Reputation from '@/components/reputation'
+import ReputationChioces from '@/components/reputation-chioces'
+import ReputationContent from '@/components/reputation-content'
 
 export default class AllReputation extends wepy.page {
   config = {
     navigationBarTitleText: '所有评价'
   }
+  data = {
+    goodId: ''
+  }
   components = {
-    reputation: Reputation
+    'reputation-chioces': ReputationChioces,
+    'reputation-content': ReputationContent
+  }
+  onLoad(e) {
+    console.log(e.id)
+    const that = this
+    this.goodId = e.id
+    setTimeout(function(){
+      that.$invoke('reputation-content', 'getContent', 'all', 'true')
+    }, 500)
   }
 }
 </script>
