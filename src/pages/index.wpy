@@ -1,24 +1,24 @@
 <style lang="less">
-  .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.container {
+  .brand {
+    width: 100%;
+    height: 70rpx;
+    background:#fff;
+    font-size:32rpx;
+    line-height:70rpx;
+    text-align:center;
+    margin: 20rpx 0rpx 0rpx;
   }
-
-  .userinfo-avatar {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-  }
-
-  .userinfo-nickname {
-    color: #aaa;
-  }
+}
 </style>
 <template>
   <view class="container">
     <banner></banner>
     <coupons></coupons>
+    <view>
+      <view class='brand'>推荐商品</view>
+      <goods></goods>
+    </view>
     <toast />
   </view>
 </template>
@@ -28,6 +28,7 @@
   import Banners from '@/components/banner'
   import Coupons from '@/components/coupons'
   import Toast from 'wepy-com-toast'
+  import Goods from '@/components/goods'
 
   export default class Index extends wepy.page {
     config = {
@@ -36,7 +37,8 @@
     components = {
       toast: Toast,
       banner: Banners,
-      coupons: Coupons
+      coupons: Coupons,
+      goods: Goods
     }
 
     data = {

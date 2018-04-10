@@ -1,36 +1,54 @@
 <style lang='less'>
-.reputation-container {
-  background: #fff;
-  padding-bottom: 30rpx;
-  .title {
-    padding: 30rpx 20rpx 10px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 30rpx;
-    .lookall {
-      color: rgba(246, 54, 55, 0.8);
-      i {
-        margin-left: 16rpx;
+.button-group {
+  display: flex;
+  justify-content: flex-start;
+  height: 86rpx;
+  background: #ececec;
+  text-align: center;
+  .item {
+    flex-grow: 1;
+    font-size: 26rpx;
+    padding-top:10rpx;
+    .number {
+      color: #9f9f9f
+    }
+    &.active {
+      color: #FA5251;
+      .number {
+        color: #FA5251;
       }
     }
+    view {
+      width: 2rpx;
+      height: 50rpx;
+      background: #c6c6c6;
+      float:right;
+      margin-top:-28rpx;
+    }
   }
-  .content {
-    padding-left: 20rpx;
-  }
-  .noReputation {
-    font-size: 26rpx;
-    color: #dfdfdf;
-    text-align: center;
-    line-height: 40rpx;
-  }
+}
+.reputation-container {
+  background: #fff;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 12rpx 0 #999;
 }
 </style>
 
 <template>
   <view class='all-reputation'>
     <!-- wepy不能传递布尔值 -->
-    <reputation-chioces showAll='true'></reputation-chioces>
-    <reputation-content :goodId.sync='goodId'></reputation-content>
+    <view class='button-group'>
+      <repeat for='{{reputation}}' key='index' index='index'>
+        <view @tap="chooseIndex({{index}})" class="item {{reputationIndex == index ? 'active' : ''}}">
+          <text style='display:block'>{{item}}</text>
+          <text class='number'>{{number[index]}}</text>
+          <view wx:if='{{index < 3}}'></view>
+        </view>
+      </repeat>
+    </view>
+    <view class='reputation-container'>
+      <reputation-content :goodId.sync='goodId'></reputation-content>
+    </view>
   </view>  
 </template>
 
@@ -44,19 +62,38 @@ export default class AllReputation extends wepy.page {
     navigationBarTitleText: '所有评价'
   }
   data = {
-    goodId: ''
+    goodId: '',
+    reputation: ['全部', '好评', '中评', '差评'],
+    number: [],
+    reputationIndex: 0
   }
   components = {
     'reputation-chioces': ReputationChioces,
     'reputation-content': ReputationContent
   }
   onLoad(e) {
-    console.log(e.id)
     const that = this
     this.goodId = e.id
     setTimeout(function(){
       that.$invoke('reputation-content', 'getContent', 'all', 'true')
     }, 500)
+  }
+  methods = {
+    chooseIndex(index) {
+      this.reputationIndex = index
+      let num = ''
+      if(index == 0) {
+        num = 'all'
+      } else {
+        num = 3 - index
+      }
+      this.$invoke('reputation-content', 'getContent', num, 'true')
+    }
+  }
+  events = {
+    'getlength': (data) => {
+      this.number = data
+    }
   }
 }
 </script>

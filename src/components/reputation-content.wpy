@@ -14,10 +14,22 @@
   .time {
     color: #cdcdcd;
     font-size: 24rpx;
+    float: right;
   }
+}
+.showall-container {
+  padding: 16rpx;
 }
 .goodReputation {
   font-size: 26rpx;
+  padding-bottom:20rpx;
+  border-bottom:2rpx solid #ccc;
+  margin-bottom:20rpx;
+  &:last-child {
+    border: none;
+    margin: 0rpx;
+    padding: 0rpx;
+  }
 }
 </style>
 
@@ -33,7 +45,7 @@
         {{filterData.goodReputationRemark}}
       </view>
     </view>
-    <view wx:if='{{isShowAll}}'>
+    <view wx:if='{{isShowAll}}' class='showall-container'>
       <repeat for='{{content}}' key='index' index='index' item='item'>
         <view class='user'>
           <image src='{{item.avatarUrl}}' />
@@ -109,6 +121,7 @@ export default class ReputationContent extends wepy.component {
       })
       array.push(this.reputation.length, type2.length, type1.length, type0.length)
       that.$invoke('../reputation-chioces', 'getlength', array)
+      that.$emit('getlength', array)
       // 不是查看所有评论
       if(!that.isShowAll) {
         let user = {}

@@ -5,54 +5,46 @@
   left: 0rpx;
   right: 0rpx;
   width: 100%;
-  font-size: 28rpx;
   display: flex;
   background: #fff;
   text-align: center;
-  height: 105rpx;
+  height: 102rpx;
+  font-size: 32rpx;
+  line-height: 102rpx;
+  color: #fff;
+  box-shadow: 0 -4rpx 12rpx 0 #999; 
   .button-group {
     display: flex;
     width: 48%;
-    border-top: 1px solid #ccc;
     view{
       width: 33%;
       border-right: 1px solid #ccc;
-      padding: 10rpx;
       image {
-        margin:0 auto 10rpx;
-        width:48rpx;
-        height:42rpx;
-        display:block;
+        margin: 20rpx auto;
+        width:62%;
+        height: 60%;
+        display: block;
       }
     }
     button {
-      font-size:28rpx;
-      line-height:1;
-      padding:10rpx;
       width: 33%;
       border: none;
       border-right: 1px solid #ccc;
       border-radius: 0;
       image {
-        margin:0 auto 10rpx;
-        width:54rpx;
-        height:48rpx;
-        display:block;
+        margin: 20rpx auto;
+        width: 94%;
+        height: 60%;
+        display: block;
       }
     }
   }
   .shop-cart {
     width: 30%;
-    line-height: 105rpx;
-    font-size: 32rpx;
-    color: #fff;
     background: #FF622B;
   }
   .buy-now {
     width: 22%;
-    line-height: 105rpx;
-    font-size: 32rpx;
-    color: #fff;
     background: #FF3E4C;
   }
 }
@@ -64,15 +56,12 @@
     <view class='button-group'>
       <view @tap='toIndex'>
         <image src='../images/home.png' />
-        <text>首页</text>
       </view>
-      <button open-type="contact" plain='{{true}}'>
+      <button open-type="contact" plain='true'>
         <image src='../images/servicer.png'/>
-        <text>客服</text>
       </button>
-      <view>
-        <image src='../images/collection.png'/>
-        <text>收藏</text>
+      <view @tap='toggleCollect'>
+        <image src="../images/{{isCollection ? 'collection_active' : 'collection'}}.png" />
       </view>
     </view>
     <view class='shop-cart'>加入购物车</view>
@@ -88,15 +77,22 @@
 import wepy from 'wepy' 
 
 export default class TabBar extends wepy.component {
+  data = {
+    isCollection: false
+  }
   methods = {
+    toggleCollect() {
+      this.isCollection = !this.isCollection
+    },
     toIndex() {
       wx.switchTab({
         url: '/pages/index',
       })
     },
     buyNow() {
-      let popupComponent = this.selectComponent('.J_Popup');
-      console.log(popupComponent)
+      console.log(this)
+      let popupComponent = this.selectComponent('.shop-cart');
+      // console.log(popupComponent)
       popupComponent && popupComponent.show();
     }
   }

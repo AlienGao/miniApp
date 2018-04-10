@@ -1,11 +1,39 @@
 <style lang='less'>
 .sign-container {
-  
+  .score-tab {
+    text {
+      display: block;
+      line-height: 50rpx;
+      width: 100%;
+      text-align: center;
+    }
+    .title {
+      font-size: 32rpx;
+      color: #666;
+      position: absolute;
+      top: 80rpx;
+      left: 0rpx;
+    }
+    .number {
+      font-size: 60rpx;
+      color: #A9996E;
+      font-weight: bolder;
+      position: absolute;
+      top: 160rpx;
+      left: 0rpx;
+    }
+  }
 }
 </style>
 
 <template>
   <view class='sign-container'>
+    <view class='score-tab'>
+      <image style='width: 100%;height: 300rpx;' src='../images/sign_background.jpeg' />
+      <text class='title'>您的可用积分</text>
+      <text class='number'>{{score}}</text>
+    </view>
+
   </view>  
 </template>
 
@@ -13,6 +41,20 @@
 import wepy from 'wepy'
 
 export default class Sign extends wepy.page {
-  
+  data = {
+    score: 0
+  }
+  onLoad() {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/amount',
+      data: {
+        token: that.$parent.globalData.token
+      },
+      success: function (res) {
+        that.score = res.data.data.score
+      }
+    })
+  }
 }
 </script>

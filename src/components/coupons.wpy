@@ -6,6 +6,7 @@
     padding: 24rpx;
     background: #fff;
     width: 100%;
+    box-sizing: border-box;
   }
   .item image {
     width: 100rpx;
@@ -64,7 +65,11 @@ export default class Coupons extends wepy.component {
         wx.navigateTo({
           url: '/pages/special-price'
         })
-      } 
+      } else {
+        wx.navigateTo({
+          url: '/pages/sign'
+        })
+      }
     }
   }
 }

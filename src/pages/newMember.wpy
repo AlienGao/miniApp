@@ -1,31 +1,222 @@
 <style lang='less'>
-
+.content_container {
+  position: relative;
+  padding: 20rpx 0rpx;
+  image {
+    width: 80%;
+    height: 320rpx;
+    margin: 0 auto;
+    display: block;
+  }
+  .content {
+    position: absolute;
+    top: 20rpx;
+    left:10%;
+    width:80%;
+    height:240rpx;
+    color: #fff;
+    display: flex;
+    justify-content: flex-start;
+    overflow: hidden;
+    box-sizing: padding-box;
+    .money {
+      width:28%;
+      font-size:34rpx;
+      text-align: center;
+      padding: 14% 0rpx;
+      text {
+        margin-left: 20rpx;
+        font-size: 76rpx;
+      }
+    }
+    .name {
+      display: flex;
+      justify-content: flex-start;
+      font-size: 32rpx;
+      width: 72%;
+      .title {
+        line-height: 1;
+        padding: 76rpx 0rpx 50rpx;    
+      }
+      button {
+        line-height: 1;
+        padding: 10rpx 16rpx;
+        background: #F6E8E1;
+        font-size: 26rpx;
+        border: none;
+        margin-top: 138rpx;
+      }
+    }
+  }
+  .bottom-content {
+    position:absolute;
+    bottom:40rpx;
+    left:18%;
+    color:rgba(256,256,256,0.7);
+    font-size:30rpx;
+    height:60rpx;
+    line-height:60rpx;
+  }
+}
 </style>
 
 <template>
-  <view>
-    新人专享
+  <view class='new_container'>
+    <image style='width: 100%;height:250rpx' src='../images/ponous_top.jpg' />
+    <wxc-tab
+      default-index="{{1}}"
+      active-text-color="#108ee9"
+      active-line-color="#108ee9"
+      component-id="c1"
+      animate="{{true}}"
+    >
+      <wxc-tab-panel
+        wx:for="{{tabs}}"
+        wx:for-item="tab"
+        wx:key="{{tab.content}}"
+        tab-index="{{index}}"
+        label="{{tab.title}}"
+        component-id="c1"
+      >
+        <repeat for='{{tab.content}}' item='item' key='index' index='index'>
+          <view class='content_container'>
+            <image src='../images/ponous.png'/>
+            <view class='content'>
+              <view class='money'>
+                <text>{{item.moneyMax}}</text>元
+              </view>
+              <view class='name'>
+                <view class='title' style='width: 64%'>
+                  <text style='font-size: 30rpx'>
+                    {{item.name}}
+                    <text style='font-size: 24rpx;line-height:50rpx;'>满{{item.moneyHreshold}}元可用</text>
+                  </text>
+                </view>
+                <view style='width: 36%'>
+                  <button @tap="tapButton({{item.id}})" size='mini' plain='true'>{{hasReceive ? '已领取' : '立即领取'}}</button>
+                </view>
+              </view>
+            </view>
+            <view class='bottom-content'>
+              <view wx:if="{{item.dateEndType == 0}}"> {{item.dateEnd}} 前有效 </view>
+              <view wx:if="{{item.dateEndType == 1}}"> 领取 {{item.dateEndDays}} 天内有效 </view>
+            </view>
+          </view>
+        </repeat>
+      </wxc-tab-panel>
+    </wxc-tab>
+    <toast />
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
 
 export default class NewMember extends wepy.page {
   config = {
-    navigationBarTitleText: '新人领券中心'
+    navigationBarTitleText: '新人领券中心',
+    usingComponents: {
+      'wxc-tab': '../../packages/@minui/wxc-tab/dist/index',
+      'wxc-tab-panel': '../../packages/@minui/wxc-tab/dist/panel'
+    }
+  }
+  components = {
+    toast: Toast
   }
   data = {
-    coupons: null
+    receiveMoneny: [],
+    scoretoMoneny: [],
+    hasReceive: false,
+    tabs: []
   }
   onLoad() {
     const that = this
+    that.coupons = []
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/coupons',
       success: function (res) {
-        console.log(res)
+        res.data.data.map((item) => {
+          if(item.needScore == 0) {
+            that.receiveMoneny.push(item)
+            that.tabs.push({
+              title: '领取中心',
+              content: that.receiveMoneny
+            })
+            that.$apply()
+          } else if(item.needScore > 0 && item.needSignedContinuous == 0) {
+            that.scoretoMoneny.push(item)
+            that.$apply()
+            that.tabs.push({
+              title: '积分兑换',
+              content: that.scoretoMoneny
+            })
+            that.$apply()
+          }
+        })
+        that.$apply()
       }
     })
   }
+  methods = {
+    tapButton(req) {
+      const that = this
+      if(this.$parent.globalData.token) {
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/fetch',
+          data: {
+            id: req,
+            token: that.$parent.globalData.token
+          },
+          success: function(res) {
+            if (res.data.code == 20001 || res.data.code == 20002) {
+              wx.showModal({
+                title: '错误',
+                content: '来晚了',
+                showCancel: false
+              })
+              return;
+            }
+            if (res.data.code == 20003) {
+              wx.showModal({
+                title: '错误',
+                content: '你领过了，别贪心哦~',
+                showCancel: false
+              })
+              return;
+            }
+            if (res.data.code == 30001) {
+              wx.showModal({
+                title: '错误',
+                content: '您的积分不足',
+                showCancel: false
+              })
+              return;
+            }
+            if (res.data.code == 20004) {
+              wx.showModal({
+                title: '错误',
+                content: '已过期~',
+                showCancel: false
+              })
+              return;
+            }
+            if (res.data.code == 0) {
+              that.$invoke('toast', 'show', {
+                title: '领取成功，赶紧去下单吧~'
+              })
+            } else {
+              wx.showModal({
+                title: '错误',
+                content: res.data.msg,
+                showCancel: false
+              })
+            }
+          }
+        })
+      }
+    }
+  }
+  
 }
 </script>

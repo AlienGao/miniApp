@@ -120,7 +120,7 @@
     }
   }
   .content {
-    padding-left: 20rpx;
+    padding: 0rpx 20rpx;
   }
   .noReputation {
     font-size: 26rpx;
@@ -143,63 +143,6 @@
       vertical-align: middle;
       display: inline-block;
     }
-  }
-}
-.tabBar {
-  position: fixed;
-  bottom: 0rpx;
-  left: 0rpx;
-  right: 0rpx;
-  width: 100%;
-  font-size: 28rpx;
-  display: flex;
-  background: #fff;
-  text-align: center;
-  height: 105rpx;
-  .button-group {
-    display: flex;
-    width: 48%;
-    border-top: 1px solid #ccc;
-    view{
-      width: 33%;
-      border-right: 1px solid #ccc;
-      padding: 10rpx;
-      image {
-        margin:0 auto 10rpx;
-        width:48rpx;
-        height:42rpx;
-        display:block;
-      }
-    }
-    button {
-      font-size:28rpx;
-      line-height:1;
-      padding:10rpx;
-      width: 33%;
-      border: none;
-      border-right: 1px solid #ccc;
-      border-radius: 0;
-      image {
-        margin:0 auto 10rpx;
-        width:54rpx;
-        height:48rpx;
-        display:block;
-      }
-    }
-  }
-  .shop-cart {
-    width: 30%;
-    line-height: 105rpx;
-    font-size: 32rpx;
-    color: #fff;
-    background: #FF622B;
-  }
-  .buy-now {
-    width: 22%;
-    line-height: 105rpx;
-    font-size: 32rpx;
-    color: #fff;
-    background: #FF3E4C;
   }
 }
 </style>
@@ -260,24 +203,7 @@
       </view>
       <recommend></recommend>
     </view>
-    <view class='tabBar'>
-      <view class='button-group'>
-        <view @tap='toIndex'>
-          <image src='../images/home.png' />
-          <text>首页</text>
-        </view>
-        <button open-type="contact" plain='{{true}}'>
-          <image src='../images/servicer.png'/>
-          <text>客服</text>
-        </button>
-        <view @tap='toggleCollect'>
-          <image src="../images/{{isCollection ? 'collection_active' : 'collection'}}.png"/>
-          <text>收藏</text>
-        </view>
-      </view>
-      <view class='shop-cart'>加入购物车</view>
-      <view class='buy-now' @tap='buyNow'>立即购买</view>
-    </view>
+    <tabbar></tabbar>
     <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom">
       <view class="popup__content">Hello World</view>
     </wxc-popup>
@@ -290,6 +216,8 @@ import DetailDesc from '@/components/detaildesc'
 import ReputationChioces from '@/components/reputation-chioces'
 import ReputationContent from '@/components/reputation-content'
 import Recommend from '@/components/goods'
+import TabBar from '@/components/tabBar'
+
 
 export default class GoodDeatail extends wepy.page {
   config = {
@@ -303,7 +231,8 @@ export default class GoodDeatail extends wepy.page {
     detaildesc: DetailDesc,
     'reputation-chioces': ReputationChioces,
     'reputation-content': ReputationContent,
-    recommend: Recommend
+    recommend: Recommend,
+    tabbar: TabBar
   }
   data = {
     goodDetail: [],
@@ -315,8 +244,7 @@ export default class GoodDeatail extends wepy.page {
     sourceLength: 0,
     swiperCurrent: 0,
     reputation: 0,
-    goodId: '',
-    isCollection: false
+    goodId: ''
   }
   onLoad(e) {
     const that = this
@@ -383,19 +311,6 @@ export default class GoodDeatail extends wepy.page {
           url: '/pages/all-reputation?id=' + this.goodId
         })
       }
-    },
-    toggleCollect() {
-      this.isCollection = !this.isCollection
-    },
-    toIndex() {
-      wx.switchTab({
-        url: '/pages/index',
-      })
-    },
-    buyNow() {
-      let popupComponent = this.selectComponent('.J_Popup');
-      console.log(popupComponent)
-      popupComponent && popupComponent.show();
     }
   }
   events = {
