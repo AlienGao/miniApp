@@ -18,8 +18,10 @@
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome": "^1.1.5",
+    "@minui/wxc-counter": "^1.0.5",
     "@minui/wxc-elip": "^1.0.5",
     "@minui/wxc-flex": "^1.0.5",
+    "@minui/wxc-icon": "^1.0.8",
     "@minui/wxc-popup": "^1.0.8",
     "@minui/wxc-tab": "^1.0.7",
     "promise-polyfill": "^7.1.1",

@@ -1,4 +1,12 @@
 <style lang='less'>
+.goodDetail-container {
+  .wetoast__bd {
+    padding: 40rpx 60rpx;
+    min-width: 0rpx;
+    min-height: 0rpx;
+    width: auto;
+  }
+}
 .swiper-container {
   width: 750rpx;
   position: relative;  
@@ -203,10 +211,8 @@
       </view>
       <recommend></recommend>
     </view>
-    <tabbar></tabbar>
-    <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom">
-      <view class="popup__content">Hello World</view>
-    </wxc-popup>
+    <tabbar :goodDetail.sync='goodDetail'></tabbar>
+    <toast />
   </view>
 </template>
 
@@ -217,6 +223,7 @@ import ReputationChioces from '@/components/reputation-chioces'
 import ReputationContent from '@/components/reputation-content'
 import Recommend from '@/components/goods'
 import TabBar from '@/components/tabBar'
+import Toast from 'wepy-com-toast'
 
 
 export default class GoodDeatail extends wepy.page {
@@ -224,7 +231,8 @@ export default class GoodDeatail extends wepy.page {
     navigationBarTitleText: '商品详情',
     usingComponents: {
       'wxc-elip': '../../packages/@minui/wxc-elip/dist/index',
-      'wxc-popup': '../../packages/@minui/wxc-popup/dist/index'
+      'wxc-popup': '../../packages/@minui/wxc-popup/dist/index',
+      'wxc-counter': '../../packages/@minui/wxc-counter/dist/index'
     }
   }
   components = {
@@ -232,7 +240,8 @@ export default class GoodDeatail extends wepy.page {
     'reputation-chioces': ReputationChioces,
     'reputation-content': ReputationContent,
     recommend: Recommend,
-    tabbar: TabBar
+    tabbar: TabBar,
+    toast: Toast
   }
   data = {
     goodDetail: [],
@@ -249,8 +258,8 @@ export default class GoodDeatail extends wepy.page {
   onLoad(e) {
     const that = this
     that.goodId = e.id
-    that.$apply()
     that.$broadcast('goodId', e.id)
+    that.$invoke('reputation-content', 'getReputation', e.id)
     //获取商品详情
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/detail',
@@ -265,7 +274,6 @@ export default class GoodDeatail extends wepy.page {
         that.sourceLength = res.data.data.pics.length
         that.videoId = res.data.data.basicInfo.videoId
         that.$apply()
-        // WxParse.wxParse('article', 'html', res.data.data.content, that, 5)
     //获取商品视频
         wepy.request({
           url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/media/video/detail',
@@ -285,7 +293,7 @@ export default class GoodDeatail extends wepy.page {
     // 商品评价
     setTimeout(function(){
       that.$invoke('reputation-content', 'getContent', 'all', 'false')
-    }, 500)
+    }, 100)
   }
   onShareAppMessage() {
     return {

@@ -73,23 +73,6 @@ export default class ReputationContent extends wepy.component {
   props = {
     goodId: String
   }
-  watch = {
-    goodId(newValue, oldValue) {
-      if(newValue !== oldValue) {
-        const that = this
-        wepy.request({
-          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
-          data: {
-            goodsId: newValue
-          },
-          success: function (res) {
-            that.reputation = res.data.data
-            that.$apply()
-          }
-        })
-      }
-    }
-  }
   methods = {
     lookall() {
       wx.navigateTo({
@@ -97,8 +80,22 @@ export default class ReputationContent extends wepy.component {
       })
     }
   }
+  getReputation (newValue) {
+    this.reputation = null
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/reputation',
+      data: {
+        goodsId: newValue
+      },
+      success: function (res) {
+        that.reputation = res.data.data
+        that.$apply()
+      }
+    })
+  }
   // type查看选项，showAll是否是查看所有评论页
-  getContent(type='all', showAll='false') {
+  getContent (type='all', showAll='false') {
     const that = this
     // 每次筛选初始化
     that.content = []
@@ -161,6 +158,9 @@ export default class ReputationContent extends wepy.component {
         })
         that.$apply()
       }
+    } else {
+      that.$invoke('../reputation-chioces', 'getlength', [])
+      that.$emit('getlength', [])
     }
   }
 }

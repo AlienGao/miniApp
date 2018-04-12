@@ -74,9 +74,11 @@ export default class AllReputation extends wepy.page {
   onLoad(e) {
     const that = this
     this.goodId = e.id
+    that.reputationIndex = 0
+    that.$invoke('reputation-content', 'getReputation', e.id)
     setTimeout(function(){
       that.$invoke('reputation-content', 'getContent', 'all', 'true')
-    }, 500)
+    }, 100)
   }
   methods = {
     chooseIndex(index) {

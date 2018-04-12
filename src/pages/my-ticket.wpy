@@ -1,0 +1,93 @@
+<style lang='less'>
+.ticket-container {
+  image {
+    width:90%;
+    height:300rpx;
+    margin:20rpx auto;
+    display:block;
+  }
+  .canuse {
+    position: absolute;
+    right: 38rpx;
+    top: 2rpx;
+    width: 180rpx;
+    height: 180rpx;
+  }
+  .text-container {
+    position: absolute;
+    width: 90%;
+    left: 5%;
+    top: 0rpx;
+    padding: 10rpx 20rpx;
+    .money {
+      color: red;
+      font-size:72rpx;
+      padding:50rpx 50rpx 10rpx;
+      text {
+        margin-left: 20rpx;
+        font-size: 38rpx;
+      }
+    }
+    .name {
+      font-size: 52rpx;
+      line-height: 60rpx;
+      padding: 10rpx 42rpx;
+    }
+    .tips {
+      padding: 10rpx 0rpx 10rpx 42rpx;
+      font-size: 26rpx;
+    }
+  }
+}
+</style>
+
+<template>
+  <view class='ticket-container'>
+    <repeat for='{{tickets}}' key='index' index='index'>
+      <view style='position: relative'>
+        <image src='../images/ticket-background.png' />
+        <image src='../images/can_use.png' class='canuse' />
+        <view class='text-container'>
+          <view class='money'>{{item.money}}<text>元</text></view>
+          <view class='name'>{{item.name}}</view>
+          <view class='tips'>
+            <text>满 {{item.moneyHreshold}} 元使用</text>
+            <text style='margin-left: 28rpx;'>{{item.dateEnd}} 前使用有效</text>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class MyTicket extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的优惠券'
+  }
+  data = {
+    tickets: null
+  }
+  onLoad() {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/my',
+      data: {
+        token: that.$parent.globalData.token
+      },
+      success: function (res) {
+        const array = []
+        res.data.data.map((item) => {
+          if(item.status == 0) {
+            array.push(item)
+          }
+        })
+        that.tickets = array
+        that.$apply()
+      }
+    })
+  }
+}
+</script>

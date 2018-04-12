@@ -48,7 +48,8 @@ export default class ReputationChioces extends wepy.component {
     },
     getlength(data) {
       this.reputation = data
-      this.$emit('getReputation', data[0])
+      const length = data[0] > 0 ? data[0] : 0
+      this.$emit('getReputation', length)
     }
   }
 }

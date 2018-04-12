@@ -2,12 +2,14 @@
 .container {
   .brand {
     width: 100%;
-    height: 70rpx;
+    height: 80rpx;
     background:#fff;
     font-size:32rpx;
-    line-height:70rpx;
+    line-height:64rpx;
     text-align:center;
     margin: 20rpx 0rpx 0rpx;
+    padding: 8rpx;
+    box-sizing: border-box;
   }
 }
 </style>
@@ -32,7 +34,10 @@
 
   export default class Index extends wepy.page {
     config = {
-      navigationBarTitleText: '花田靴下'
+      navigationBarTitleText: '花田靴下袜子专卖店',
+      usingComponents: {
+        'wxc-elip': '../../packages/@minui/wxc-elip/dist/index'
+      }
     }
     components = {
       toast: Toast,

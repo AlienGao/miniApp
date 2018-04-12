@@ -50,7 +50,12 @@ export default class extends wepy.app {
       'pages/newMember',
       'pages/hot-goods',
       'pages/special-price',
-      'pages/sign'
+      'pages/sign',
+      'pages/my-ticket',
+      'pages/select-address',
+      'pages/address-add',
+      'pages/my-fav',
+      'pages/pay'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -60,10 +65,9 @@ export default class extends wepy.app {
     },
     tabBar: {
       color: "#6e6d6b",
-      selectedColor: "#e64340",
+      selectedColor: "#FF8869",
       borderStyle: "white",
       backgroundColor: "#fff",
-      'box-shadow':"0 0 6px 0",
       list: [{
         pagePath: "pages/index",
         iconPath: "images/icon_home.png",
@@ -106,14 +110,12 @@ export default class extends wepy.app {
     }
     wx.login({
       success: function(res) {
-        console.log('登录' + res.code)
         wx.request({
           url: 'https://api.it120.cc/' + that.globalData.subDomain + '/user/wxapp/login',
           data: {
             code: res.code
           },
           success: function(res) {
-            console.log('登录放回code', res.data.code)
             if (res.data.code == 10000) {
               // 去注册
               that.registerUser();

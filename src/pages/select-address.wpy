@@ -1,0 +1,158 @@
+<template>
+  <view class="container">
+    <view wx:if='{{addressList && addressList.length > 0}}' class="address-list">
+      <view class="a-address"  wx:for-items="{{addressList}}" wx:key="{{index}}">
+        <view class="left-text {{item.isDefault? 'active':''}}" @tap.stop="selectTap" data-id="{{item.id}}">
+          <view class="name-tel">
+            {{item.linkMan}}  {{item.mobile}}
+          </view>
+          <view class="address-box">
+            {{item.address}}
+          </view>     
+        </view>   
+        <view class="right-edit" @tap.stop="editAddess" data-id="{{item.id}}"></view> 
+      </view>
+    </view>
+    <view class="bottom-box" @tap="addAddess">
+      <image src='../images/add_address.png' />
+      <view class="add-btn">新增收货地址</view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class SelectAddress extends wepy.page {
+  config = {
+    "navigationBarTitleText": "我的地址"
+  }
+  data = {
+    addressList: []
+  }
+  methods = {
+    selectTap(e) {
+      const that = this
+      var id = e.currentTarget.dataset.id;
+      wx.request({
+        url: 'https://api.it120.cc/'+ that.$parent.globalData.subDomain +'/user/shipping-address/update',
+        data: {
+          token:that.$parent.globalData.token,
+          id:id,
+          isDefault:'true'
+        },
+        success: (res) =>{
+          wx.switchTab({
+            url: '/pages/my'
+          })
+        }
+      })
+    },
+    addAddess() {
+      wx.navigateTo({
+        url:"/pages/address-add"
+      })
+    },
+    editAddess (e) {
+      wx.navigateTo({
+        url: "/pages/address-add?id=" + e.currentTarget.dataset.id
+      })
+    }
+  }
+  onUnload() {
+    wx.switchTab({
+      url: '/pages/my'
+    })
+  }
+  onShow() {
+    this.initShippingAddress()
+  }
+  initShippingAddress () {
+    var that = this;
+    wx.request({
+      url: 'https://api.it120.cc/'+ that.$parent.globalData.subDomain +'/user/shipping-address/list',
+      data: {
+        token:that.$parent.globalData.token
+      },
+      success: (res) =>{
+        if (res.data.code == 0) {
+          that.addressList = res.data.data
+          that.$apply()
+        } else if (res.data.code == 700){
+          that.addressList = []
+          that.$apply()
+        }
+      }
+    })
+  }
+}
+</script>
+
+<style lang='less'>
+.container {
+    background-color:#F2f2f2;
+}
+.address-list{
+    width: 100%;
+    background-color: #fff;
+    margin-top: 20rpx;
+}
+.address-list .a-address{
+    width: 720rpx;
+    margin-left: 30rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #eee;
+}
+.a-address .left-text{
+    width: 610rpx;
+    box-sizing: border-box;
+    padding-left: 58rpx;
+}
+.a-address .left-text.active{
+    background: url(https://cdn.it120.cc/images/weappshop/addr-active.png) no-repeat left center;
+    background-size: 28rpx auto;
+}
+.a-address .left-text .name-tel{
+    margin-bottom: 20rpx;
+}
+.a-address .left-text .address-box{
+    font-size:24rpx;
+    color:#888888;
+    line-height:36rpx;
+}
+.a-address .right-edit{
+    width: 109rpx;
+    height: 100%;
+    padding: 50rpx 0 50rpx 58rpx;
+    box-sizing: border-box;
+    background: url(https://cdn.it120.cc/images/weappshop/addr-edit.png) no-repeat 43rpx center;
+    background-size: 35rpx auto;
+}
+.bottom-box{
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  font-size:28rpx;
+  color:#000000;
+  border-top: 1rpx solid #eee;
+  height:100rpx;
+  line-height: 100rpx;
+  background: #fff url(https://cdn.it120.cc/images/weappshop/arrow-right.png) no-repeat 705rpx center;
+  background-size: 15rpx auto;
+  padding-left: 40rpx;
+  overflow: hidden;
+  image {
+    width: 60rpx;
+    height: 60rpx;
+    vertical-align: top;
+    margin-top:20rpx;
+  }
+  .add-btn {
+    display: inline-block;
+    margin-left: 30rpx;
+  }
+}
+</style>

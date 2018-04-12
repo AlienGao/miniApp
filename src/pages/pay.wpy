@@ -15,7 +15,7 @@ import wepy from 'wepy'
 
 export default class Pay extends wepy.page {
   config = {
-    navigationBarTitleText: '购物车'
+    navigationBarTitleText: '我的订单'
   }
   data = {
     orders: []

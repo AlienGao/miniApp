@@ -23,7 +23,9 @@
       width:28%;
       font-size:34rpx;
       text-align: center;
-      padding: 14% 0rpx;
+      line-height: 260rpx;
+      height: 260rpx;
+      overflow: hidden;
       text {
         margin-left: 20rpx;
         font-size: 76rpx;
@@ -80,7 +82,7 @@
       >
         <repeat for='{{tab.content}}' item='item' key='index' index='index'>
           <view class='content_container'>
-            <image src='../images/ponous.png'/>
+            <image src='../images/ponous.png' />
             <view class='content'>
               <view class='money'>
                 <text>{{item.moneyMax}}</text>元
@@ -115,7 +117,7 @@ import Toast from 'wepy-com-toast'
 
 export default class NewMember extends wepy.page {
   config = {
-    navigationBarTitleText: '新人领券中心',
+    navigationBarTitleText: '领券中心',
     usingComponents: {
       'wxc-tab': '../../packages/@minui/wxc-tab/dist/index',
       'wxc-tab-panel': '../../packages/@minui/wxc-tab/dist/panel'
@@ -132,27 +134,26 @@ export default class NewMember extends wepy.page {
   }
   onLoad() {
     const that = this
-    that.coupons = []
+    that.tabs = []
+    that.receiveMoneny = []
+    that.scoretoMoneny = []
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/coupons',
       success: function (res) {
         res.data.data.map((item) => {
           if(item.needScore == 0) {
             that.receiveMoneny.push(item)
-            that.tabs.push({
-              title: '领取中心',
-              content: that.receiveMoneny
-            })
-            that.$apply()
           } else if(item.needScore > 0 && item.needSignedContinuous == 0) {
             that.scoretoMoneny.push(item)
-            that.$apply()
-            that.tabs.push({
-              title: '积分兑换',
-              content: that.scoretoMoneny
-            })
-            that.$apply()
           }
+          return true
+        })
+        that.tabs.push({
+          title: '领取中心',
+          content: that.receiveMoneny
+        }, {
+          title: '积分兑换',
+          content: that.scoretoMoneny
         })
         that.$apply()
       }

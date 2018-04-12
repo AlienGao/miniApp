@@ -1,19 +1,259 @@
 <style lang='less'>
-
+.my-container {
+  background: #fff;
+  height: 100vh;
+  .userInfo {
+    display: flex;
+    justify-content: flex-start;
+    height: 160rpx;
+    padding: 20rpx;
+    .info {
+      padding: 20rpx;
+      flex-grow: 2;
+      font-size: 48rpx;
+      font-weight:bolder;
+      button {
+        padding:0rpx;
+        border:none;
+        text-align:left;
+        color: #ccc;
+        font-weight: lighter; 
+        line-height: 80rpx;
+        font-size: 36rpx;
+      }
+    }
+    .avatar {
+      flex-flow: 1;
+      padding: 20rpx;
+      image {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 50%;
+      }
+    }
+  }
+  .mess {
+    display: flex;
+    justify-content: flex-start;
+    height: 100rpx;
+    border-bottom: 1px solid #efefef;
+    .line {
+      width: 2rpx;
+      height: 60rpx;
+      margin-top: 20rpx;
+      background: #ccc;
+    }
+    .score, .balance {
+      width: 50%;
+      padding: 20rpx 30rpx;
+      text-align: center;
+      text {
+        display: inline-block;
+        color: #666;
+      }
+      image {
+        width: 60rpx;
+        height: 60rpx;
+        border-radius: 50%;
+        display: inline-block;
+      }
+    }
+  }
+  .order {
+    padding: 40rpx 20rpx 20rpx;
+    color: #9f9f9f;
+    text {
+      display: block;
+    }
+    .icons {
+      display: flex;
+      justify-content: flex-start;
+      font-size: 30rpx;
+      view {
+        padding: 20rpx 0rpx;
+        width: 33%;
+        text-align: center;
+        image {
+          width: 80rpx;
+          height: 60rpx;
+        }
+        text {
+          margin-top: 12rpx;
+        }
+      }
+    }
+    .line {
+      width: 2rpx !important;
+      height: 80rpx;
+      padding: 0rpx !important;
+      background: #ccc;
+      margin-top: 40rpx;
+    }
+  }
+  .bottom-container {
+    border-top: 30rpx solid #efefef;
+    navigator {
+      padding: 30rpx 40rpx;      
+      border-bottom: 1rpx solid #efefef;
+      display: flex;
+      justify-content: space-between;
+      image {
+        width: 30rpx;
+        height: 30rpx;
+        margin-top:10rpx;
+      }
+    }
+  }
+}
 </style>
 
 <template>
-  <view class='gooddetail-container'>
-
+  <view class='my-container'>
+    <view class='top-container'>
+      <view class='userInfo'>
+        <view class='info'>
+          <text>{{userInfo.nickName}}</text>
+          <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber" plain='true'>{{userMobile.length > 0 ? userMobile : "点击绑定手机号码"}}</button>
+        </view>
+        <view class='avatar'>
+          <image src='{{userInfo.avatarUrl}}' />
+        </view>
+      </view>
+      <view class='mess'>
+        <view class='score'>
+          <image src='../images/score.png' />
+          <text style='margin-left: 20rpx;vertical-align: 10rpx;'>积分<text style='margin-left: 42rpx'>{{score}}</text></text>
+        </view>
+        <view class='line'></view>
+        <view class='balance'>
+          <image src='../images/balance.png' />
+          <text style='margin-left: 20rpx;vertical-align: 10rpx;'>余额<text style='margin-left: 42rpx'>{{balance}}</text></text>
+        </view>
+      </view>
+      <view class='order'>
+        <text style='padding: 0rpx 10rpx 30rpx;color:#696969;'>我的订单</text>
+        <view class='icons'>
+          <view>
+            <image src='../images/payment.png' />
+            <text>待付款</text>
+          </view>
+          <view class='line'></view>
+          <view>
+            <image src='../images/take.png' />
+            <text>待收货</text>
+          </view>
+          <view class='line'></view>
+          <view>
+            <image src='../images/recommend.png' />
+            <text>待评价</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class='bottom-container'>
+      <navigator url='/pages/my-ticket'>我的优惠券<image src='../images/right.png' /></navigator>
+      <navigator url='/pages/my-fav'>我的收藏<image src='../images/right.png' /></navigator>
+      <navigator url='/pages/select-address'>我的收货地址<image src='../images/right.png' /></navigator>
+      <text style='font-size:30rpx;color:#ccc;text-align:center;display:block;line-height:110rpx;'>客服电话: 186-0294-7794 (每天9:00 ~ 22:00)</text>
+    </view>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
 
-export default class GoodDeatail extends wepy.page {
-  onLoad(e) {
-    console.log(e)
+export default class My extends wepy.page {
+  config = {
+    navigationBarTitleText: '个人中心'
+  }
+  data = {
+    userInfo: null,
+    userMobile: '',
+    apiUserInfoMap: null,
+    score: 0,
+    balance: 0
+  }
+  onShow() {
+    this.getUserInfo()
+    this.getUserApiInfo()
+    this.getUserAmount()
+  }
+  getUserInfo (cb) {
+    const that = this
+    wx.login({
+      success: function() {
+        wx.getUserInfo({
+          success: function(res) {
+            that.userInfo = res.userInfo
+            that.$apply()
+          }
+        })
+      }
+    })
+  }
+  getUserApiInfo () {
+    var that = this;
+    wx.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/detail',
+      data: {
+        token: that.$parent.globalData.token
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          that.apiUserInfoMap = res.data.data,
+          that.userMobile = res.data.data.base.mobile
+        }
+      }
+    })
+  }
+  getUserAmount () {
+    var that = this;
+    wx.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/amount',
+      data: {
+        token: that.$parent.globalData.token
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          that.score = res.data.data.score
+        }
+      }
+    })
+  }
+  getPhoneNumber (e) {
+    if (!e.detail.errMsg || e.detail.errMsg != "getPhoneNumber:ok") {
+      wx.showModal({
+        title: '提示',
+        content: '无法获取手机号码',
+        showCancel: false
+      })
+      return;
+    }
+    var that = this;
+    wx.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/wxapp/bindMobile',
+      data: {
+        token: that.$parent.globalData.token,
+        encryptedData: e.detail.encryptedData,
+        iv: e.detail.iv
+      },
+      success: function (res) {
+        if (res.data.code == 0) {
+          wx.showToast({
+            title: '绑定成功',
+            icon: 'success',
+            duration: 2000
+          })
+          that.getUserApiInfo();
+        } else {
+          wx.showModal({
+            title: '提示',
+            content: '绑定失败',
+            showCancel: false
+          })
+        }
+      }
+    })
   }
 }
 </script>

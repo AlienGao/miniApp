@@ -15,26 +15,27 @@
   box-shadow: 0 -4rpx 12rpx 0 #999; 
   .button-group {
     display: flex;
-    width: 48%;
+    width: 40%;
     view{
       width: 33%;
       border-right: 1px solid #ccc;
       image {
-        margin: 20rpx auto;
-        width:62%;
-        height: 60%;
-        display: block;
+        margin:26rpx auto;
+        width:60rpx;
+        height:50rpx;
+        display:block;
       }
     }
     button {
       width: 33%;
+      padding: 0rpx;
       border: none;
       border-right: 1px solid #ccc;
       border-radius: 0;
       image {
-        margin: 20rpx auto;
-        width: 94%;
-        height: 60%;
+        margin: 22rpx auto;
+        width: 60rpx;
+        height: 60rpx;
         display: block;
       }
     }
@@ -44,8 +45,112 @@
     background: #FF622B;
   }
   .buy-now {
-    width: 22%;
+    width: 30%;
     background: #FF3E4C;
+  }
+}
+.J_Popup {
+  .popup__content {
+    background: #fff;
+    .content_container {
+      padding: 20rpx 0rpx 20rpx 20rpx;
+      .top {
+        display: flex;
+        justify-content: flex-start;
+        position: relative;
+        border-bottom:1px solid #dfdfdf;
+        position: relative;
+        display:flex;
+        justify-content:510rpx;
+        padding:20rpx 40rpx 20rpx 0rpx;
+        image {
+          width:210rpx;
+          height:210rpx;
+          display: inline-block;
+        }
+        .close_icon {
+          width: 42rpx;
+          height: 42rpx;
+          right: 20rpx;
+          top: 24rpx;
+          position: absolute;
+        }
+        view {
+          margin-left: 10rpx;
+          display: inline-block;
+          width: 450rpx;
+          text {
+            display: block;
+          }
+          .name {
+            font-size: 34rpx;
+            color: #6f6f6f;
+          }
+          .money {
+            color: #FF3E4C;
+            font-size: 36rpx;
+            position:absolute;
+            bottom:20rpx;
+            margin-left: 0rpx;
+            .oldPrice {
+              color: #cfcfcf;
+              text-decoration: line-through;
+              display: inline-block;
+              margin-right: 20rpx;
+            }
+            .newPrice {
+              display: inline-block;
+            }
+          }
+        }
+      }
+      .middle {
+        padding: 20rpx 0rpx 20rpx 0rpx;
+        border-bottom: 1px solid #dfdfdf;
+        text {
+          display: block;
+        }
+        .tag {
+          padding: 8rpx 12rpx;
+          color: #fff;
+          background: #FF3E4C;
+          width:100rpx;
+          text-align:center;
+          border-radius:10rpx;
+          margin-top:10rpx;
+        }
+      }
+      .bottom {
+        padding: 20rpx 0rpx 0rpx 0rpx;
+        color: #6f6f6f;
+        .title {
+          display: inline-block;
+          width: 30%;
+          vertical-align: bottom
+        }
+        .stores {
+          display: inline-block;
+          width: 44%;
+          vertical-align: bottom;
+        }
+        .counterStyle {
+          display: inline-block;
+          vertical-align: bottom;
+          view {
+            overflow: hidden;
+          }
+        }
+      }
+    }
+    button {
+      width:100vw;
+      padding: 10rpx;
+      border:none;
+      background:#FF622B;
+      color:#fff;
+      font-size:36rpx;
+      border-radius:0rpx;
+    }
   }
 }
 </style>
@@ -58,17 +163,44 @@
         <image src='../images/home.png' />
       </view>
       <button open-type="contact" plain='true'>
-        <image src='../images/servicer.png'/>
+        <image src='../images/servicer.png' />
       </button>
       <view @tap='toggleCollect'>
         <image src="../images/{{isCollection ? 'collection_active' : 'collection'}}.png" />
       </view>
     </view>
-    <view class='shop-cart'>加入购物车</view>
+    <view class='shop-cart' @tap='addGoods'>加入购物车</view>
     <view class='buy-now' @tap='buyNow'>立即购买</view>
   </view>
-  <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom">
-    <view class="popup__content">Hello World</view>
+  <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom" locked='true'>
+    <view class="popup__content">
+      <view class='content_container'>
+        <view class='top'>
+          <image src='{{goodDetail.basicInfo.pic}}' />
+          <image src='../images/close_icon.png' class='close_icon' @tap='onClose'/>
+          <view>
+            <text class='name'>{{goodDetail.basicInfo.name}}</text>
+            <view class='money'>
+              <text wx:if='{{orderNumber < 3}}'>￥ {{goodDetail.basicInfo.originalPrice}}</text> 
+              <view wx:if='{{orderNumber > 2}}'>
+                <text class='oldPrice'>￥ {{goodDetail.basicInfo.originalPrice}}</text>
+                <text class='newPrice'>￥ {{goodDetail.basicInfo.minPrice}}</text>  
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class='middle'>
+          <text>尺码</text>
+          <text class='tag'>均码</text>
+        </view>
+        <view class='bottom'>
+          <text class='title'>数量</text>
+          <text class='stores'>库存 {{goodDetail.basicInfo.stores}} 件</text>
+          <wxc-counter class='counterStyle' number="{{1}}" max='{{1000}}' min="0" @changenumber.stop="onChangeNumber"></wxc-counter>
+        </view>
+      </view>
+      <button @tap='addGoodsConfim' plain='true'>确定</button>    
+    </view>
   </wxc-popup>
 </view>
 </template>
@@ -78,11 +210,66 @@ import wepy from 'wepy'
 
 export default class TabBar extends wepy.component {
   data = {
-    isCollection: false
+    isCollection: false,
+    detail: [],
+    orderNumber: 1,
+    goodsId: '',
+    type: ''
+  }
+  props = {
+    goodDetail: String
   }
   methods = {
     toggleCollect() {
       this.isCollection = !this.isCollection
+      const that = this
+      if(this.isCollection) {
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/fav/add',
+          data: {
+            token: that.$parent.$parent.globalData.token,
+            goodsId: that.goodsId
+          },
+          success: function (res) {
+            if(res.data.code == 0) {
+              that.$invoke('../toast', 'show', {
+                title: '收藏成功',
+                img: '../images/success.png'
+              })
+            } else {
+              that.$invoke('../toast', 'show', {
+                title: '收藏失败',
+                img: '../images/fail.png'
+              })
+              that.isCollection = !that.isCollection
+              that.$apply()
+            }
+          }
+        })
+      } else {
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/fav/delete',
+          data: {
+            token: that.$parent.$parent.globalData.token,
+            goodsId: that.goodsId
+          },
+          success: function (res) {
+            if(res.data.code == 0) {
+              that.$invoke('../toast', 'show', {
+                title: '取消收藏成功',
+                img: '../images/success.png'
+              })
+            } else {
+              that.$invoke('../toast', 'show', {
+                title: '取消收藏失败',
+                img: '../images/fail.png'
+              })
+              that.isCollection = !that.isCollection
+              that.$apply()
+            }
+          }
+        })
+      }
     },
     toIndex() {
       wx.switchTab({
@@ -90,10 +277,103 @@ export default class TabBar extends wepy.component {
       })
     },
     buyNow() {
-      console.log(this)
-      let popupComponent = this.selectComponent('.shop-cart');
-      // console.log(popupComponent)
+      this.orderNumber = 1
+      let counterComponent = this.$wxpage.selectComponent('.counterStyle')
+      counterComponent && counterComponent.initNumber()
+      this.type = 'buyNow'
+      let popupComponent = this.$wxpage.selectComponent('.J_Popup');
       popupComponent && popupComponent.show();
+    },
+    onChangeNumber (e) {
+      this.orderNumber = e.detail.number
+    },
+    addGoods() {
+      this.orderNumber = 1
+      let counterComponent = this.$wxpage.selectComponent('.counterStyle')
+      counterComponent && counterComponent.initNumber()
+      this.type = 'addGoods'
+      let popupComponent = this.$wxpage.selectComponent('.J_Popup');
+      popupComponent && popupComponent.show();
+    },
+    addGoodsConfim() {
+      const that = this
+      const reqData = [{
+        "goodsId": that.goodsId,
+        "number": that.orderNumber
+      }]
+      const goodsJsonStr = JSON.stringify(reqData)
+      if (this.orderNumber > 0 && this.type == 'addGoods') {
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/order/create',
+          method: 'POST',
+          header: {
+            'content-type': 'application/x-www-form-urlencoded'
+          },
+          data: {
+            token: that.$parent.$parent.globalData.token,
+            goodsJsonStr: goodsJsonStr
+          },
+          success: function(res) {
+            if(res.data.code == 0) {
+              that.$invoke('../toast', 'show', {
+                title: '添加购物车成功',
+                img: '../images/success.png'
+              })
+            } else {
+              that.$invoke('../toast', 'show', {
+                title: '添加购物车失败',
+                img: '../images/fail.png'
+              })
+            }
+          }
+        })
+      } else if (this.orderNumber > 0 && this.type == 'buyNow') {
+        console.log('立马购买')
+        wx.setStorage({
+          key: 'buyNow',
+          data: {
+            pic: that.goodDetail.basicInfo.pic,
+            name: that.goodDetail.basicInfo.name,
+            originalPrice: that.goodDetail.originalPrice,
+            minPrice: that.goodDetail.minPrice,
+            number: that.orderNumber
+          }
+        })
+        wx.navigateTo({
+          url: '/pages/pay'
+        })
+      }
+      let component = that.$wxpage.selectComponent('.J_Popup')
+      component && component.forceHide()
+    },
+    onClose() {
+      let component = this.$wxpage.selectComponent('.J_Popup')
+      component && component.forceHide()
+    }
+  }
+  events = {
+    'goodId'(code) {
+      this.goodsId = code
+      const that = this
+      wepy.request({
+        url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/shop/goods/fav/list',
+        data: {
+          token: that.$parent.$parent.globalData.token,
+        },
+        success: function (res) {
+          if(res.data.code == 404) {
+            return;
+          } else if(res.data.data.length > 0) {
+            that.isCollection = false
+            res.data.data.forEach((item) => {
+              if(item.goodsId == code) {
+                that.isCollection = true
+                that.$apply()
+              }
+            })
+          }
+        }
+      })
     }
   }
 }
