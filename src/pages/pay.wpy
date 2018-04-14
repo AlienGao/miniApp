@@ -1,11 +1,57 @@
 <template>
-  <view class='shop_cart'>
-    <repeat for='{{orders}}' key='index' index='index'>
-
-    </repeat>
-    <view class='no-orders' wx:if='{{orders.length == 0}}'>
-      <image src='../images/shop_cart.png' />
-      <text>还没有订单哦~</text>
+  <view class='container'>
+    <view class='top_container' wx:if="{{address == null}}">
+      <image src='../images/add.png' />
+      <view class='content'>
+        <text>新增收货地址</text>
+        <image src='../images/right.png' />
+      </view>
+    </view>
+    <view class='top_address' wx:if='{{address !== null}}' @tap='chooseAddress'>
+      <image src='../images/fix.png' />
+      <view class='content'>
+        <view class='text'> 
+          <text class='top_text'>{{address.linkMan}} {{address.mobile}}</text>
+          <text class='bottom_text'>{{address.address}}</text>
+        </view>
+        <image src='../images/right.png' />
+      </view>
+    </view>
+    <view class='middle_container'>
+      <text class='title'>商品列表</text>
+      <repeat for='{{order}}' key='index' index='index'>
+        <view class='goods'>
+          <image src='{{item.pic}}' />
+          <view class='content'>
+            <view class='text'>
+              <text class='name'>{{item.name}}</text>
+              <text class='price'>￥ {{item.number > 2 ? item.minPrice : item.originalPrice}}</text>
+            </view>
+            <view class='number'>x {{item.number}}</view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class='bottom_container'>
+      <view class='wuliu'>
+        <text>配送方式</text>
+        <text>包邮</text>
+      </view>
+      <view class='remark'>
+        <text>备注</text>
+        <textarea name="remark" maxlength='-1' class="input" type="text" placeholder="如需备注请输入" value="{{remark}}" bindinput='onConfirm'/>
+      </view>
+    </view>
+    <view class='conpous' @tap='chooseCoupons'>
+      <text>优惠券</text>
+      <image src='../images/right.png' wx:if='{{coupons == 0}}'/>
+      <text wx:if='{{coupons > 0}}'>- ￥ {{coupons}}</text>
+    </view>
+    <view class='fixed'>
+      <view>
+        <text>合计：￥ {{total}}</text>
+        <button plain @tap='submitOrder'>提交订单</button>
+      </view>
     </view>
   </view>
 </template>
@@ -18,40 +64,353 @@ export default class Pay extends wepy.page {
     navigationBarTitleText: '我的订单'
   }
   data = {
-    orders: []
+    order: [],
+    total: 0,
+    address: null,
+    coupons: 0,
+    couponsId: '',
+    remark: '',
+    type: ''
   }
-  onLoad() {
+  onLoad(e) {
+    const that = this
+    if(e.from == 'shop-cart') {
+      that.type = 'addGoods'
+      wx.getStorage({
+        key: 'addGoods',
+        success: function (res) {
+          that.total = 0
+          let array = []
+          res.data.forEach((item) => {
+            if(item.isChoosed) {
+              that.total += item.number > 2 ? Number((item.minPrice * item.number).toFixed(1)) : Number((item.originalPrice * item.number).toFixed(1))
+              array.push(item)
+            }
+          })
+          that.order = array
+          that.$apply()
+        }
+      })
+    } else {
+      that.type = 'buyNow'
+      wx.getStorage({
+        key: 'buyNow',
+        success: function(res) {
+          that.order = [res.data]
+          that.total = 0
+          that.total = res.data.number > 2 ? (res.data.minPrice * res.data.number).toFixed(1) : (res.data.originalPrice * res.data.number).toFixed(1)
+          that.$apply()
+        }
+      })
+    }
+  }
+  onShow() {
     const that = this
     wepy.request({
-      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/shipping-address/default',
       data: {
         token: that.$parent.globalData.token
       },
-      success: function (res) {
-        console.log(res.data)
+      success: function(res) {
+        if(res.data.code !== 0) {
+          wx.showModal({
+            title: '增加地址',
+            content: '系统检测暂无默认地址，是否现在添加？',
+            showCancel: false,
+            success: function() {
+              wx.navigateTo({
+                url: '/pages/address-add'
+              })
+            }
+          })
+        } else {
+          that.address = res.data.data
+          that.$apply()
+        }
       }
     })
+    wx.getStorage({
+      key: 'couponsId',
+      success: function(res) {
+        if(res.data !== '') {
+          that.couponsId = res.data
+          that.$apply()
+          wx.getStorage({
+            key: 'couponsMoney',
+            success: function(mon) {
+              that.coupons = mon.data
+              that.total -= mon.data
+              that.$apply()
+              wx.setStorage({
+                key: 'couponsId',
+                data: ''
+              })
+              wx.setStorage({
+                key: 'couponsMoney',
+                data: 0
+              })
+            }
+          })
+        }
+      },
+      fail: function() {
+        that.couponsId = ''
+        that.$apply()
+      }
+    })
+  }
+  methods = {
+    chooseAddress() {
+      wx.navigateTo({
+        url: '/pages/select-address?from=pay'
+      })
+    },
+    onConfirm(res) {
+      this.remark = res.datail.value
+    },
+    chooseCoupons() {
+      this.total += this.coupons
+      wx.navigateTo({
+        url: '/pages/my-ticket'
+      })
+    },
+    submitOrder() {
+      const that = this
+      let array = []
+      that.order.forEach((item) => {
+        array.push({
+          goodsId: item.goodsId,
+          number: item.number
+        })
+      })
+      const goodsJsonStr = JSON.stringify(array)
+      wepy.request({
+        url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/create',
+        method: 'POST',
+        header: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        data: {
+          token: that.$parent.globalData.token,
+          provinceId: that.address.provinceId,
+          cityId: that.address.cityId,
+          districtId: that.address.districtId,
+          address: that.address.address,
+          linkMan: that.address.linkMan,
+          mobile: that.address.mobile,
+          code: that.address.code,
+          remark: that.remark,
+          couponId: that.couponsId,
+          expireMinutes: 30,
+          goodsJsonStr: goodsJsonStr
+        },
+        success: function(res) {
+          if(res.data.code == 0) {
+            wx.setStorage({
+              key: that.type,
+              data: []
+            })
+            wx.navigateTo({
+              url: '/pages/order-list?index=0'
+            })
+          } else {
+            wx.showToast({
+              title: res.data.msg,
+              icon: 'none',
+              duration: 1000
+            })
+          }
+        }
+      })
+    }
   }
 }
 </script>
 
 <style lang='less'>
-.shop_cart {
-  .no-orders {
-    padding: 200rpx 20rpx;
-    color: #dbdbdb;
+.container {
+  width: 100vw;
+  background: #fff;
+  min-height: 100vh;
+}
+.top_container {
+  display:flex;
+  padding:10rpx 20rpx;
+  height:100rpx;
+  box-sizing:border-box;
+  background: #fff;
+  border-top: 20rpx solid #efefef;
+  image {
+    width: 48rpx;
+    height: 48rpx;
+    margin-top: 6rpx;
+  }
+  .content {
+    display: flex;
+    justify-content: space-between;
+    font-size: 32rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    flex-grow: 2;
+    padding-left: 26rpx;
     image {
-      display: block;
-      width: 200rpx;
-      height: 200rpx;
-      margin: 0 auto;
-    }
-    text {
-      display: block;
-      text-align: center;
-      font-size: 36rpx;
-      line-height: 80rpx;
+      width: 36rpx;
+      height: 36rpx;
+      margin-top: 12rpx;
     }
   }
+}
+.top_address {
+  display: flex;
+  justify-content: space-between;
+  padding:10rpx 20rpx;
+  height:160rpx;
+  box-sizing:border-box;
+  background: #fff;
+  border-top: 20rpx solid #efefef;
+  image {
+    width: 32rpx;
+    height: 32rpx;
+    margin: 15rpx;
+  }
+  .content {
+    width: 640rpx;
+    display: flex;
+    justify-content: space-between;
+    .text {
+      .top_text {
+        height: 60rpx;
+        line-height: 60rpx;
+        font-size: 32rpx;
+        display: block;
+      }
+      .bottom_text {
+        height: 40rpx;
+        line-height: 40rpx;
+        font-size: 26rpx;
+        display: block;
+      }
+    }
+    image {
+      width: 36rpx;
+      height: 36rpx;
+      margin-top: 38rpx;
+    }
+  }
+}
+.middle_container {
+  border-top: 20rpx solid #efefef;
+  padding-left: 20rpx;
+  background: #fff;
+  .title {
+    display:block;
+    padding:20rpx 0rpx;
+    border-bottom:2rpx solid #dfdfdf;
+    font-size:32rpx;
+  }
+  .goods {
+    padding: 20rpx 20rpx 20rpx 0rpx;
+    display: flex;
+    border-bottom: 1px solid #dfdfdf;
+    &:nth-last-child(1) {
+      border: none;
+    }
+    image {
+      width: 200rpx;
+      height: 200rpx;
+    }
+    .content {
+      position: relative;
+      width: 500rpx;
+      font-size: 26rpx;
+      .text {
+        display: flex;
+        justify-content: space-between;
+        .name {
+          padding: 0rpx 10rpx;
+        }
+        .price {
+          width: 190rpx;
+          text-align: right;
+        }
+      }
+      .number {
+        text-align: right;
+        position: absolute;
+        bottom: 20rpx;
+        right: 0rpx;
+      }
+    }
+  }
+}
+.bottom_container {
+  padding-left: 20rpx;
+  border-top: 20rpx solid #efefef;
+  background: #fff;
+  .wuliu {
+    display: flex;
+    justify-content: space-between;
+    padding: 20rpx 20rpx 20rpx 0rpx;
+    border-bottom: 2rpx solid #dfdfdf;
+    font-size: 32rpx;
+  }
+  .remark {
+    display: flex;
+    justify-content: flex-start;
+    padding: 20rpx 0rpx;
+    font-size: 32rpx;
+    text {
+      flex-grow: 1;
+    }
+    textarea {
+      flex-flow:3;
+      font-size:32rpx;
+      height:42rpx;
+      margin-top:2rpx;
+    }
+  }
+}
+.conpous {
+  border-top: 20rpx solid #efefef;
+  border-bottom: 20rpx solid #efefef;
+  margin-bottom: 100rpx;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  font-size: 32rpx;
+  image {
+    width: 36rpx;
+    height: 36rpx;
+  }
+}
+.fixed {
+  position: fixed;
+  bottom: 0rpx;
+  left: 0rpx;
+  height: 100rpx;
+  view {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 32rpx;
+    line-height: 100rpx;
+    width: 100vw;
+    background: #fff;
+    border-top: 1rpx solid #dfdfdf;
+    text {
+      color: #d81e06;
+      text-align: right;
+      padding: 0rpx 40rpx;
+      flex-grow: 3;
+    }
+    button {
+      border: none;
+      border-radius: 0rpx;
+      background: #d81e06;
+      color: #fff;
+      font-size: 32rpx;
+      line-height: 100rpx;
+    }
+  }
+  
 }
 </style>

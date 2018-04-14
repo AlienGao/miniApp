@@ -217,7 +217,10 @@ export default class TabBar extends wepy.component {
     type: ''
   }
   props = {
-    goodDetail: String
+    goodDetail: {
+      type: Object,
+      default: {}
+    }
   }
   methods = {
     toggleCollect() {
@@ -297,50 +300,60 @@ export default class TabBar extends wepy.component {
     },
     addGoodsConfim() {
       const that = this
-      const reqData = [{
-        "goodsId": that.goodsId,
-        "number": that.orderNumber
-      }]
-      const goodsJsonStr = JSON.stringify(reqData)
+      const storeGood = {
+        pic: that.goodDetail.basicInfo.pic,
+        name: that.goodDetail.basicInfo.name,
+        originalPrice: that.goodDetail.basicInfo.originalPrice,
+        minPrice: that.goodDetail.basicInfo.minPrice,
+        number: that.orderNumber,
+        goodsId: that.goodsId
+      }
       if (this.orderNumber > 0 && this.type == 'addGoods') {
-        wepy.request({
-          url: 'https://api.it120.cc/' + that.$parent.$parent.globalData.subDomain + '/order/create',
-          method: 'POST',
-          header: {
-            'content-type': 'application/x-www-form-urlencoded'
-          },
-          data: {
-            token: that.$parent.$parent.globalData.token,
-            goodsJsonStr: goodsJsonStr
-          },
+        wx.getStorage({
+          key: 'addGoods',
           success: function(res) {
-            if(res.data.code == 0) {
-              that.$invoke('../toast', 'show', {
-                title: '添加购物车成功',
-                img: '../images/success.png'
+            let flag = false
+            let toStoreGood = res.data.map((item) => {
+              if(item.goodsId == that.goodsId) {
+                item.number += that.orderNumber
+                flag = true
+              }
+              return item
+            })
+            // 不同商品
+            if(!flag) {
+              wx.setStorage({
+                key: 'addGoods',
+                data: [...res.data, storeGood]
               })
+            // 相同商品
             } else {
-              that.$invoke('../toast', 'show', {
-                title: '添加购物车失败',
-                img: '../images/fail.png'
+              wx.setStorage({
+                key: 'addGoods',
+                data: [...toStoreGood]
               })
             }
+          },
+          fail: function() {
+            wx.setStorage({
+              key: 'addGoods',
+              data: [storeGood]
+            })
           }
         })
       } else if (this.orderNumber > 0 && this.type == 'buyNow') {
-        console.log('立马购买')
         wx.setStorage({
           key: 'buyNow',
           data: {
             pic: that.goodDetail.basicInfo.pic,
             name: that.goodDetail.basicInfo.name,
-            originalPrice: that.goodDetail.originalPrice,
-            minPrice: that.goodDetail.minPrice,
+            originalPrice: that.goodDetail.basicInfo.originalPrice,
+            minPrice: that.goodDetail.basicInfo.minPrice,
             number: that.orderNumber
           }
         })
         wx.navigateTo({
-          url: '/pages/pay'
+          url: '/pages/pay?from=buyNow'
         })
       }
       let component = that.$wxpage.selectComponent('.J_Popup')

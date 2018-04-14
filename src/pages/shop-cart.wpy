@@ -1,42 +1,317 @@
 <template>
   <view class='shop_cart'>
-    <repeat for='{{orders}}' key='index' index='index'>
-
+    <repeat for='{{orders}}' key='index' index='index' item='item'>
+      <movable-area>
+        <movable-view @htouchmove='onhtouchmove({{item}})' direction="horizontal" x="{{isShow !== item.goodsId ? '0' : '146'}}" out-of-bounds inertia>
+          <view class='container'>
+            <view class="choose {{item.isChoosed == true ? 'active' : ''}}" @tap='chooseGood({{item}})'>
+              <image wx:if='{{item.isChoosed == true}}' src='../images/choose.png'/>
+            </view>
+            <view class='content-container'>
+              <image src='{{item.pic}}' @tap='toDetail({{item.goodsId}})' />
+              <view>
+                <text class='name' @tap='chooseGood({{item}})'>{{item.name}}</text>
+                <text class='number'>￥ {{item.number > 2 ? item.minPrice : item.originalPrice}}</text>
+                <wxc-counter class='counter_{{index}}' max='{{1000}}' min="1" id='{{index}}' @changenumber="onChangeNumber"></wxc-counter>
+              </view>
+            </view>
+            <view wx:if='{{item.goodsId == isShow}}' class='delete' @tap='delete({{item.goodsId}})'>
+              删除
+            </view>
+          </view>
+        </movable-view>
+      </movable-area>
     </repeat>
+    <view class='fixedBar'>
+      <view class="choose {{chooseAll == true ? 'active' : ''}}" @tap="onChooseAll">
+        <image wx:if='{{chooseAll == true}}' src='../images/choose.png'/>
+      </view>
+      <view class='content'>
+        <text @tap='onChooseAll'>全选</text>
+        <text style='color: #d81e06'>合计：￥ {{total}}</text>
+      </view>
+      <button plain @tap='buyNow'>下单</button>
+    </view>
     <view class='no-orders' wx:if='{{orders.length == 0}}'>
       <image src='../images/shop_cart.png' />
       <text>还没有订单哦~</text>
     </view>
+    <toast />
   </view>
 </template>
 
 <script>
 import wepy from 'wepy'
+import Toast from 'wepy-com-toast'
 
 export default class Pay extends wepy.page {
   config = {
-    navigationBarTitleText: '购物车'
+    navigationBarTitleText: '购物车',
+    usingComponents: {
+      'wxc-counter': '../../packages/@minui/wxc-counter/dist/index'
+    }
+  }
+  components = {
+    toast: Toast
   }
   data = {
-    orders: []
+    orders: [],
+    number: 1,
+    isShow: '',
+    chooseAll: false, // 是否全选UI
+    total: 0
   }
-  onLoad() {
-    const that = this
-    wepy.request({
-      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
-      data: {
-        token: that.$parent.globalData.token
-      },
-      success: function (res) {
-        console.log(res.data)
+  methods = {
+    onChangeNumber(e) {
+      this.orders.map((item, index) => {
+        if(index == e.currentTarget.id) {
+          item.number = e.detail.number
+        }
+        return item
+      })
+      wx.setStorage({
+        key: 'addGoods',
+        data: this.orders
+      })
+      this.calcTotal()
+    },
+    onhtouchmove(item) {
+      this.isShow = item.goodsId
+    },
+    delete(e) {
+      let array = []
+      this.orders.forEach((item) => {
+        if(item.goodsId !== e) {
+          array.push(item)
+        }
+      })
+      wx.setStorage({
+        key: 'addGoods',
+        data: array
+      })
+      this.orders = array
+      this.calcTotal()
+    },
+    chooseGood(data) {
+      this.orders.map((item) => {
+        if(item.goodsId == data.goodsId) {
+          item.isChoosed = !item.isChoosed
+        }
+        return item
+      })
+      this.calcTotal()
+      let flag = true
+      this.orders.forEach((item) => {
+        if(!item.isChoosed) {
+          flag = false
+        }
+      })
+      this.chooseAll = flag
+    },
+    onChooseAll() {
+      this.chooseAll = !this.chooseAll
+      this.orders.map((item) => {
+        item.isChoosed = this.chooseAll
+        return item
+      })
+      this.calcTotal()
+    },
+    toDetail(id) {
+      wx.navigateTo({
+        url: '/pages/gooddetail?id=' + id
+      })
+    },
+    // 下单
+    buyNow() {
+      let array = []
+      this.orders.forEach((item) => {
+        if(item.isChoosed) {
+          array.push(item)
+        }
+      })
+      if(array.length == 0) {
+        this.$invoke('toast', 'show', {
+          title: '没有选择物品哦~',
+          img: '../images/fail.png'
+        })
+      } else {
+        wx.setStorage({
+          key: 'addGoods',
+          data: this.orders
+        })
+        wx.navigateTo({
+          url: '/pages/pay?from=shop-cart' 
+        })
+      }
+    }
+  }
+  // 自定义method
+  calcTotal () {
+    this.total = 0
+    this.orders.forEach((item) => {
+      if(item.isChoosed && item.number > 2) {
+        this.total += item.number * item.minPrice   
+      } else if (item.isChoosed && item.number < 3) {
+        this.total += item.number * item.originalPrice
       }
     })
+    this.total = this.total.toFixed(1)
+  }
+  getData () {
+    const that = this
+    wx.getStorage({
+      key: 'addGoods',
+      success: function (res) {
+        that.orders = res.data.map((item) => {
+          item.isChoosed = false
+          return item
+        })
+        wx.setStorage({
+          key: 'addGoods',
+          data: that.orders
+        })
+        that.$apply()
+      }
+    })
+  }
+  onShow() {
+    this.getData()
+    this.chooseAll = false
+    setTimeout(() => {
+      this.orders.forEach((item, index) => {
+        let component = this.$wxpage.selectComponent(`.counter_${index}`)
+        component && component.updateNumber(item.number)
+      })
+      this.calcTotal()
+      this.$apply()
+    }, 100)
   }
 }
 </script>
 
 <style lang='less'>
 .shop_cart {
+  movable-area {
+    width: 100vw;
+    height: 240rpx;
+    background: #fff;
+    border-bottom: 2rpx solid #dfdfdf;
+  }
+  movable-view {
+    width: 120vw;
+    height: 220rpx;
+    padding: 10rpx 0rpx;
+    position: absolute;
+    right: 0rpx;
+    top: 0rpx;
+  }
+  .container {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 20rpx;
+    height: 240rpx;
+    margin-bottom: 120rpx;
+    .choose {
+      width:32rpx;
+      height:32rpx;
+      border:2rpx solid #ccc;
+      border-radius:50%;
+      margin-top: 94rpx;
+      position: relative;
+      &.active {
+        border: 2rpx solid #d81e06;
+      }
+      image {
+        width:36rpx;
+        height:36rpx;
+        position:absolute;
+        left:-2rpx;
+        top:-2rpx;
+      }
+    }
+    .content-container {
+      display:flex;
+      justify-content:space-between;
+      width: 680rpx;
+      margin: 10rpx 0rpx 10rpx 20rpx;
+      position: relative;
+      image {
+        width: 200rpx;
+        height: 200rpx;
+      }
+      .name, .number {
+        display: block;
+        font-size: 32rpx;
+        width: 440rpx;
+      }
+      .number {
+        position: absolute;
+        left:234rpx;
+        bottom:30rpx;
+        color: red;
+      }
+      wxc-counter {
+        position: absolute;
+        bottom: 24rpx;
+        right: 20rpx;
+        view, text {
+          overflow: hidden;
+        }
+      }
+    }
+    .delete {
+      background: red;
+      width: 146rpx;
+      line-height: 240rpx;
+      text-align: center;
+      color: #fff;
+    }
+  }
+  .fixedBar {
+    display:flex;
+    height:100rpx;
+    line-height:100rpx;
+    padding-left:20rpx;
+    width:100%;
+    background:#fff;
+    border-bottom:1rpx solid #dfdfdf;
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    .choose {
+      width:32rpx;
+      height:32rpx;
+      border:2rpx solid #ccc;
+      border-radius:50%;
+      margin-top: 34rpx;
+      position: relative;
+      &.active {
+        border: 2rpx solid #d81e06;
+      }
+      image {
+        width:36rpx;
+        height:36rpx;
+        position:absolute;
+        left:-2rpx;
+        top:-2rpx;
+      }
+    }
+    .content {
+      padding:0rpx 28rpx;
+      display:flex;
+      justify-content:space-between;
+      flex-grow:2;
+      font-size:32rpx;
+    }
+    button {
+      border:none;
+      background:#d81e06;
+      border-radius:0rpx;
+      color:#fff;
+      flex-grow:2;
+      line-height:100rpx;
+    }
+  }
   .no-orders {
     padding: 200rpx 20rpx;
     color: #dbdbdb;

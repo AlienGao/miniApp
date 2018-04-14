@@ -43,8 +43,8 @@
 
 <template>
   <view class='ticket-container'>
-    <repeat for='{{tickets}}' key='index' index='index'>
-      <view style='position: relative'>
+    <repeat for='{{tickets}}' key='index' index='index' item='item'>
+      <view style='position: relative' @tap='chooseTicket({{item}})'>
         <image src='../images/ticket-background.png' />
         <image src='../images/can_use.png' class='canuse' />
         <view class='text-container'>
@@ -70,24 +70,37 @@ export default class MyTicket extends wepy.page {
   data = {
     tickets: null
   }
-  onLoad() {
+  onLoad(e) {
     const that = this
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/discounts/my',
       data: {
-        token: that.$parent.globalData.token
+        token: that.$parent.globalData.token,
+        status: 0
       },
       success: function (res) {
-        const array = []
-        res.data.data.map((item) => {
-          if(item.status == 0) {
-            array.push(item)
-          }
-        })
-        that.tickets = array
+        that.tickets = res.data.data
         that.$apply()
       }
     })
+    if(e && e == 'pay') {
+      that.from = 'pay'
+    } else {
+      that.from = ''
+    }
+  }
+  methods = {
+    chooseTicket(item) {
+      wx.setStorage({
+        key: 'couponsId',
+        data: item.id
+      })
+      wx.setStorage({
+        key: 'couponsMoney',
+        data: item.money
+      })
+      wx.navigateBack({})
+    }
   }
 }
 </script>

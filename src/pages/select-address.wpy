@@ -28,7 +28,8 @@ export default class SelectAddress extends wepy.page {
     "navigationBarTitleText": "我的地址"
   }
   data = {
-    addressList: []
+    addressList: [],
+    from: ''
   }
   methods = {
     selectTap(e) {
@@ -42,9 +43,13 @@ export default class SelectAddress extends wepy.page {
           isDefault:'true'
         },
         success: (res) =>{
-          wx.switchTab({
-            url: '/pages/my'
-          })
+          if(that.from == 'my') {
+            wx.switchTab({
+              url: '/pages/my'
+            })
+          } else {
+            wx.navigateBack({})
+          }
         }
       })
     },
@@ -59,13 +64,16 @@ export default class SelectAddress extends wepy.page {
       })
     }
   }
-  onUnload() {
-    wx.switchTab({
-      url: '/pages/my'
-    })
-  }
+  // onUnload() {
+  //   wx.switchTab({
+  //     url: '/pages/my'
+  //   })
+  // }
   onShow() {
     this.initShippingAddress()
+  }
+  onLoad(e) {
+    this.from = e.from
   }
   initShippingAddress () {
     var that = this;
@@ -84,6 +92,11 @@ export default class SelectAddress extends wepy.page {
         }
       }
     })
+  }
+  events = {
+    'popstate'(res) {
+      console.log(res)
+    }
   }
 }
 </script>

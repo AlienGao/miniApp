@@ -133,17 +133,17 @@
       <view class='order'>
         <text style='padding: 0rpx 10rpx 30rpx;color:#696969;'>我的订单</text>
         <view class='icons'>
-          <view>
+          <view @tap='toOrderList(0)'>
             <image src='../images/payment.png' />
             <text>待付款</text>
           </view>
           <view class='line'></view>
-          <view>
+          <view @tap='toOrderList(2)'>
             <image src='../images/take.png' />
             <text>待收货</text>
           </view>
           <view class='line'></view>
-          <view>
+          <view @tap='toOrderList(3)'>
             <image src='../images/recommend.png' />
             <text>待评价</text>
           </view>
@@ -153,7 +153,7 @@
     <view class='bottom-container'>
       <navigator url='/pages/my-ticket'>我的优惠券<image src='../images/right.png' /></navigator>
       <navigator url='/pages/my-fav'>我的收藏<image src='../images/right.png' /></navigator>
-      <navigator url='/pages/select-address'>我的收货地址<image src='../images/right.png' /></navigator>
+      <navigator url='/pages/select-address?from=my'>我的收货地址<image src='../images/right.png' /></navigator>
       <text style='font-size:30rpx;color:#ccc;text-align:center;display:block;line-height:110rpx;'>客服电话: 186-0294-7794 (每天9:00 ~ 22:00)</text>
     </view>
   </view>
@@ -177,6 +177,13 @@ export default class My extends wepy.page {
     this.getUserInfo()
     this.getUserApiInfo()
     this.getUserAmount()
+  }
+  methods = {
+    toOrderList(index) {
+      wx.navigateTo({
+        url: '/pages/order-list?index=' + index
+      })
+    }
   }
   getUserInfo (cb) {
     const that = this

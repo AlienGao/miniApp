@@ -225,7 +225,6 @@ import Recommend from '@/components/goods'
 import TabBar from '@/components/tabBar'
 import Toast from 'wepy-com-toast'
 
-
 export default class GoodDeatail extends wepy.page {
   config = {
     navigationBarTitleText: '商品详情',
@@ -273,7 +272,7 @@ export default class GoodDeatail extends wepy.page {
         that.buyNumMax = res.data.data.basicInfo.stores
         that.sourceLength = res.data.data.pics.length
         that.videoId = res.data.data.basicInfo.videoId
-        that.$apply()
+        // that.$apply()
     //获取商品视频
         wepy.request({
           url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/media/video/detail',
@@ -284,7 +283,7 @@ export default class GoodDeatail extends wepy.page {
             if (res.data.code == 0) {
               that.videoMp4Src = res.data.data.fdMp4
               that.sourceLength = that.sourceLength + 1
-              that.$apply()
+              // that.$apply()
             }
           }
         })

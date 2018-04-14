@@ -1,0 +1,283 @@
+<template>
+  <view class='container'>
+    <view class='tabs'>
+      <repeat for='{{tabs}}' index='index' key='index'>
+        <text class="{{index == activeIndex ? 'active' : 'ordinary' }}" @tap='changeIndex({{index}})'>{{item}}</text>
+      </repeat>
+    </view>
+    <repeat for='{{orders}}' index='index' key='index' wx:if='{{orders.length > 0}}'>
+      <view class='order'>
+        <view class='top'>
+          <view class='content'>
+            <text>下单时间: {{item.dateAdd}}</text>
+            <text style='color: #d81e06'>{{item.statusStr}}</text>
+          </view>
+          <view class='orderNumber'>
+            订单号: {{item.orderNumber}}
+          </view>
+          <view class='orderNumber' wx:if='{{item.remark && item.remark.length > 0}}'>
+            备注: {{item.remark}}
+          </view>
+        </view>
+        <repeat for='{{goods[item.id]}}' index='goodIndex' key='goodIndex' item='goodItem'>
+          <view class='images'>
+            <image src='{{goodItem.pic}}' />
+          </view>
+        </repeat>
+        <view class='bottom'>
+          <view class='total'>合计: ￥ {{item.amountReal}}</view>
+          <view class='buttons' wx:if='{{activeIndex == 0}}'>
+            <button class='cancle' plain @tap='cancleOrder({{item}})'>取消订单</button>
+            <button class='pay' plain @tap='payOrder({{item}})'>立即支付</button>
+          </view>
+          <view class='buttons' wx:if='{{activeIndex == 3}}'>
+            <button plain class='pay' @tap='recommendOrder({{item}})'>去评价</button>
+          </view>
+        </view>
+      </view>
+    </repeat>
+    <view class='no-orders' wx:if='{{orders.length == 0}}'>
+      <image src='../images/shop_cart.png' />
+      <text>还没有订单哦~</text>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class OrderList extends wepy.page {
+  config = {
+    navigationBarTitleText: '订单列表',
+    usingComponents: {
+      'wxc-tab': '../../packages/@minui/wxc-tab/dist/index',
+      'wxc-tab-panel': '../../packages/@minui/wxc-tab/dist/panel'
+    }
+  }
+  data = {
+    tabs: ['代付款', '待发货', '待收货', '待评价', '已完成'],
+    orders: [], //每个订单信息
+    goods: null,  // 每个订单对应的商品信息
+    logisticsMap: null, // 物流信息
+    activeIndex: 0
+  }
+  onLoad(e) {
+    this.activeIndex = e.index
+    wx.showLoading({})
+    this.onShow(e.index)
+  }
+  methods = {
+    cancleOrder(order) {
+      const that = this
+      wepy.request({
+        url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/close',
+        data: {
+          token: that.$parent.globalData.token,
+          orderId: order.id
+        },
+        success: function(res) {
+          if(res.data.code == 0) {
+            const orderArray = []
+            const goodArray = []
+            that.orders.forEach((item) => {
+              if(item.id !== order.id) {
+                orderArray.push(item)
+              }
+            })
+            delete that.goods[res.id]
+            that.orders = orderArray
+            that.goods = that.goods
+            that.$apply()
+            wx.showToast({
+              title: '删除订单成功',
+              icon: 'success',
+              duration: 500
+            })
+          }
+        }
+      })
+    },
+    payOrder(order) {
+      const that = this
+      let remark = "在线充值";
+      let nextAction = {};
+      if (order.id != 0) {
+        remark = "支付订单 ：" + order.id;
+        nextAction = { type: 0, id: order.id };
+      }
+      wepy.request({
+        url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/pay/wxapp/get-pay-data',
+        data: {
+          token: that.$parent.globalData.token,
+          money: order.money,
+          remark: remark,
+          payName:"在线支付",
+          nextAction: nextAction
+        },
+        //method:'POST',
+        success: function(res){
+          console.log(res.data)
+          if(res.data.code == 0){
+            // 发起支付
+            wx.requestPayment({
+              timeStamp:res.data.data.timeStamp,
+              nonceStr:res.data.data.nonceStr,
+              package:'prepay_id=' + res.data.data.prepayId,
+              signType:'MD5',
+              paySign:res.data.data.sign,
+              fail:function (aaa) {
+                wx.showToast({title: '支付失败:' + aaa})
+              },
+              success:function () {
+                wx.showToast({title: '支付成功'})
+                // wx.redirectTo({
+                //   url: redirectUrl
+                // });
+              }
+            })
+          } else {
+            wx.showToast({ title: '服务器忙' + res.data.code + res.data.msg})
+          }
+        }
+      })
+    },
+    changeIndex(index) {
+      this.activeIndex = index
+      wx.showLoading({})
+      this.onShow(index)
+    },
+    recommendOrder(order) {
+
+    }
+  }
+  onShow (type) {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
+      data: {
+        token: that.$parent.globalData.token,
+        status: type
+      },
+      success: function (res) {
+        if(res.data.code == 0) {
+          that.orders = res.data.data.orderList
+          that.goods = res.data.data.goodsMap
+          that.logisticsMap = res.data.data.logisticsMap
+          that.$apply()
+          wx.hideLoading({})
+          console.log(res.data)
+        } else {
+          that.orders = []
+          that.goods = null
+          that.logisticsMap = null
+          that.$apply()
+          wx.hideLoading({})
+        }
+      }
+    })
+  }
+}
+</script>
+
+<style lang='less'>
+.container {
+  .tabs {
+    display: flex;
+    justify-content: flex-start;
+    height: 80rpx;
+    background: #fff;
+    text {
+      width: 20%;
+      line-height: 80rpx;
+      text-align: center;
+      font-size: 32rpx;
+    }
+    .active {
+      color: #d81e06;
+      border-bottom: 4rpx solid #d81e06;
+    }
+  }
+  .order {
+    margin-top: 20rpx;
+    padding-left: 20rpx;
+    background: #fff;
+    &:nth-last-child(1) {
+      margin-bottom: 20rpx;
+    }
+    .top {
+      border-bottom: 1rpx solid #dfdfdf;
+      view {
+        padding: 10rpx 20rpx 10rpx 0rpx;
+        font-size: 32rpx;
+      }
+      .content {
+        display: flex;
+        justify-content: space-between;
+        height: 60rpx;
+        line-height: 60rpx;
+      }
+      .orderNumber {
+        height: 40rpx;
+        line-height: 40rpx;
+      }
+    }
+    .images {
+      display: flex;
+      justify-content: flex-start;
+      padding: 20rpx 0rpx;
+      border-bottom: 1rpx solid #dfdfdf;
+      image {
+        width: 140rpx;
+        height: 140rpx;
+        margin-right: 12rpx;
+      }
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      padding: 10rpx 20rpx 10rpx 0rpx;
+      height: 80rpx;
+      .total {
+        color: #d81e06;
+        font-size: 32rpx;
+        line-height: 80rpx;
+      }
+      .buttons {
+        width: 420rpx;
+        display: flex;
+        justify-content: space-between;
+        button {
+          font-size: 32rpx;
+          height: 60rpx;
+          margin: 0rpx;
+          margin-top: 10rpx;
+          line-height: 60rpx;
+        }
+        .cancle {
+          color: #cfcfcf;
+          border: 2rpx solid #cfcfcf;
+        }
+        .pay {
+          color: #d81e06;
+          border: 2rpx solid #d81e06;
+        }
+      }
+    }
+  }
+  .no-orders {
+    padding: 200rpx 20rpx;
+    color: #dbdbdb;
+    image {
+      display: block;
+      width: 200rpx;
+      height: 200rpx;
+      margin: 0 auto;
+    }
+    text {
+      display: block;
+      text-align: center;
+      font-size: 36rpx;
+      line-height: 80rpx;
+    }
+  }
+}
+</style>
