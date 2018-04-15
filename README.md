@@ -1,4 +1,5 @@
-####** 描述**
+#### **描述**
+
 写这个项目是机缘巧合的在github上发现一个[开源接口](https://www.it120.cc "开源接口")，并且在了解了小程序的开发框架主要是基于Vue的，正好可以做个小程序练手。最近美团也开源了一款[小程序框架](https://github.com/Meituan-Dianping/mpvue "小程序框架")，据说更接近Vue开发，有时间也想尝试一下。目前基于小程序的UI库并不多，比较推荐[MinUI](https://github.com/meili/minui "MinUI")和[zanui-weapp](https://github.com/youzan/zanui-weapp "zanui-weapp")。
 > ![](https://github.com/GaoJun9521/miniApp/blob/master/forth.jpg?raw=true)
 先放上二维码，项目还在审核中。。。
@@ -23,7 +24,7 @@ https://tencent.github.io/wepy/
 http://mp.weixin.qq.com/debug/wxadoc/dev/
 
 ### **项目预览**
-![](https://github.com/GaoJun9521/miniApp/blob/master/first.gif?raw=true)![](https://github.com/GaoJun9521/miniApp/blob/master/second.gif?raw=true)![](https://github.com/GaoJun9521/miniApp/blob/master/third.png?raw=true)
+![](https://github.com/GaoJun9521/miniApp/blob/master/first.gif?raw=true)![](https://github.com/GaoJun9521/miniApp/blob/master/second.gif?raw=true)
 
 ### **TODO**
 1. 增加物流接口
