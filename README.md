@@ -31,6 +31,8 @@ https://tencent.github.io/wepy/
 ```
 http://mp.weixin.qq.com/debug/wxadoc/dev/
 ```
+#### **项目预览**
+/Users/LovelyDove/Desktop/first.gif/Users/LovelyDove/Desktop/second.gif/Users/LovelyDove/Desktop/0561F936-6FA3-450C-B3BB-A71E1516E3C4.png
 #### **感谢**
 - 本项目的后台由[api工厂](https://www.it120.cc)提供
 - 本项目UI参考[素洁商城](https://github.com/dyq086/wxYuHanStore)，并使用了其中一些图标
