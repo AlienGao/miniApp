@@ -2,7 +2,10 @@
   <view class='container'>
     <view class='tabs'>
       <repeat for='{{tabs}}' index='index' key='index'>
-        <text class="{{index == activeIndex ? 'active' : 'ordinary' }}" @tap='changeIndex({{index}})'>{{item}}</text>
+        <view class="{{index == activeIndex ? 'active' : 'ordinary' }}" @tap='changeIndex({{index}})'>
+          {{item}}
+          <text class='dot' wx:if='{{activeArray[index]}}'></text>
+        </view>
       </repeat>
     </view>
     <repeat for='{{orders}}' index='index' key='index' wx:if='{{orders.length > 0}}'>
@@ -19,20 +22,18 @@
             备注: {{item.remark}}
           </view>
         </view>
-        <repeat for='{{goods[item.id]}}' index='goodIndex' key='goodIndex' item='goodItem'>
-          <view class='images'>
+        <view class='images'>
+          <repeat for='{{goods[item.id]}}' index='goodIndex' key='goodIndex' item='goodItem'>
             <image src='{{goodItem.pic}}' />
-          </view>
-        </repeat>
+          </repeat>
+        </view>
         <view class='bottom'>
           <view class='total'>合计: ￥ {{item.amountReal}}</view>
           <view class='buttons' wx:if='{{activeIndex == 0}}'>
             <button class='cancle' plain @tap='cancleOrder({{item}})'>取消订单</button>
             <button class='pay' plain @tap='payOrder({{item}})'>立即支付</button>
           </view>
-          <view class='buttons' wx:if='{{activeIndex == 3}}'>
-            <button plain class='pay' @tap='recommendOrder({{item}})'>去评价</button>
-          </view>
+          <button plain wx:if='{{activeIndex == 3}}' class='recommend' @tap='recommendOrder({{item}})'>去评价</button>
         </view>
       </view>
     </repeat>
@@ -58,12 +59,14 @@ export default class OrderList extends wepy.page {
     orders: [], //每个订单信息
     goods: null,  // 每个订单对应的商品信息
     logisticsMap: null, // 物流信息
-    activeIndex: 0
+    activeIndex: 0,
+    activeArray: []
   }
   onLoad(e) {
     this.activeIndex = e.index
     wx.showLoading({})
-    this.onShow(e.index)
+    this.show(e.index)
+    this.requestAll()
   }
   methods = {
     cancleOrder(order) {
@@ -92,6 +95,7 @@ export default class OrderList extends wepy.page {
               icon: 'success',
               duration: 500
             })
+            that.requestAll()
           }
         }
       })
@@ -129,13 +133,12 @@ export default class OrderList extends wepy.page {
               },
               success:function () {
                 wx.showToast({title: '支付成功'})
-                // wx.redirectTo({
-                //   url: redirectUrl
-                // });
+                that.show(1)
+                that.requestAll()
               }
             })
           } else {
-            wx.showToast({ title: '服务器忙' + res.data.code + res.data.msg})
+            wx.showToast({ title: '服务器忙' + res.data.code})
           }
         }
       })
@@ -143,13 +146,15 @@ export default class OrderList extends wepy.page {
     changeIndex(index) {
       this.activeIndex = index
       wx.showLoading({})
-      this.onShow(index)
+      this.show(index)
     },
     recommendOrder(order) {
-
+      wx.navigateTo({
+        url: '/pages/order-reputation?order=' + JSON.stringify(order) + '&goods=' + JSON.stringify(this.goods[order.id])
+      })
     }
   }
-  onShow (type) {
+  show (type) {
     const that = this
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
@@ -175,6 +180,25 @@ export default class OrderList extends wepy.page {
       }
     })
   }
+  requestAll () {
+    this.activeArray = Array.from({length: 5}).fill(false)
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
+      data: {
+        token: that.$parent.globalData.token,
+      },
+      success: function (res) {
+        if(res.data.code == 0) {
+          res.data.data.orderList.forEach((item) => {
+            that.activeArray[item.status] = true
+          })
+          that.activeArray[4] = false
+          that.$apply()
+        }
+      }
+    })
+  }
 }
 </script>
 
@@ -185,11 +209,21 @@ export default class OrderList extends wepy.page {
     justify-content: flex-start;
     height: 80rpx;
     background: #fff;
-    text {
+    view {
       width: 20%;
       line-height: 80rpx;
       text-align: center;
       font-size: 32rpx;
+      position: relative;
+      .dot {
+        width: 10rpx;
+        height: 10rpx;
+        position: absolute;
+        top: 20rpx;
+        right: 6rpx;
+        background: #d81e06;
+        border-radius: 50%;
+      }
     }
     .active {
       color: #d81e06;
@@ -226,9 +260,9 @@ export default class OrderList extends wepy.page {
       padding: 20rpx 0rpx;
       border-bottom: 1rpx solid #dfdfdf;
       image {
-        width: 140rpx;
-        height: 140rpx;
-        margin-right: 12rpx;
+        width: 134rpx;
+        height: 134rpx;
+        margin-right: 8rpx;
       }
     }
     .bottom {
@@ -240,6 +274,15 @@ export default class OrderList extends wepy.page {
         color: #d81e06;
         font-size: 32rpx;
         line-height: 80rpx;
+      }
+      .recommend {
+        font-size: 32rpx;
+        height: 60rpx;
+        margin: 0rpx;
+        margin-top: 10rpx;
+        line-height: 60rpx;
+        color: #d81e06;
+        border: 2rpx solid #d81e06;
       }
       .buttons {
         width: 420rpx;

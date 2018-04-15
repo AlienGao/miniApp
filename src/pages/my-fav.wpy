@@ -29,18 +29,18 @@ export default class MyFav extends wepy.page {
   data = {
     favs: []
   }
-  onShow() {
+  onLoad() {
     const that = this
     wepy.request({
       url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/shop/goods/fav/list',
       data: {
         token: that.$parent.globalData.token
       },
-      success: function (res) {
-        if(res.data.code == 404) {
+      success: function(res) {
+        if(res.data.code !== 0) {
           that.favs = []
           that.$apply()
-        } else if(res.data.data.length > 0) {
+        } else if(res.data.code == 0) {
           that.favs = res.data.data
           that.$apply()
         }

@@ -1,0 +1,155 @@
+<template>
+  <view class='order'>
+    <view class='top'>
+      <view class='title'>
+        订单信息
+      </view>
+      <view class='content'>
+        <text>下单时间: {{order.dateAdd}}</text>
+        <text style='color: #d81e06'>{{order.statusStr}}</text>
+      </view>
+      <view class='orderNumber'>
+        订单号: {{order.orderNumber}}
+      </view>
+      <view class='orderNumber' wx:if='{{order.remark && order.remark.length > 0}}'>
+        备注: {{order.remark}}
+      </view>
+    </view>
+    <view class='images'>
+      <repeat for='{{goods}}' index='goodIndex' key='goodIndex' item='goodItem'>
+        <image src='{{goodItem.pic}}' />
+      </repeat>
+    </view>
+    <view class='bottom'>
+      <view class='total'>合计: ￥ {{order.amountReal}}</view>
+    </view>
+    <form bindsubmit="submitReputation" report-submit="true">
+      <view class='reputation'>
+        <view class="section section_gap">
+          <view style="margin-top:35rpx;margin-bottom:35rpx;">评价：</view>
+          <radio-group name="goodReputation">
+            <label style="margin-right:35rpx;"><radio value="2" checked/>好评</label>
+            <label style="margin-right:35rpx;"><radio value="1"/>中评</label>
+            <label style="margin-right:35rpx;"><radio value="0"/>差评</label>
+          </radio-group>
+        </view>
+        <view class="row-box" style="margin-top:35rpx">
+          <view class="row-label">备注</view>
+          <input name="orderGoodsId" value="{{order.id}}" style="display:none;"/>
+          <textarea name="goodReputationRemark" style="margin-top:35rpx;width:100%;" value="非常愉快的一次购物！" />
+        </view>
+      </view>
+      <button formType="submit" plain class='submit'>提交评论</button>
+    </form>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy'
+export default class OrderReputation extends wepy.page {
+  config = {
+    navigationBarTitleText: '订单评价'
+  }
+  data = {
+    goods: [],
+    order: null
+  }
+  onLoad(data) {
+    const goods = JSON.parse(data.goods)
+    const order = JSON.parse(data.order)
+    this.goods = goods
+    this.order = order
+  }
+  submitReputation (e) {
+    wx.showLoading()
+    const reputation = []
+    const that = this
+    this.goods.forEach((item) => {
+      reputation.push({
+        id: item.id,
+        reputation: e.detail.value['goodReputation'],
+        remark: e.detail.value['goodReputationRemark']
+      })
+    })
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/reputation',
+      data: {
+        postJsonString: {
+          token: that.$parent.globalData.token,
+          orderId: that.order.id,
+          reputations: reputation
+        }
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.code == 0) {
+          wx.navigateTo({
+            url: '/pages/order-list?index=' + 3
+          })
+          wx.hideLoading()
+        }
+      }
+    })
+  }
+}
+</script>
+
+<style lang='less'>
+.order {
+  padding-left: 20rpx;
+  background: #fff;
+  height: 100vh;
+  overflow: hidden;
+  .top {
+    border-bottom: 1rpx solid #dfdfdf;
+    view {
+      padding: 10rpx 20rpx 10rpx 0rpx;
+      font-size: 32rpx;
+    }
+    title {
+      border-bottom: 1rpx solid #dfdfdf;
+    }
+    .content {
+      display: flex;
+      justify-content: space-between;
+      height: 60rpx;
+      line-height: 60rpx;
+    }
+    .orderNumber {
+      height: 40rpx;
+      line-height: 40rpx;
+    }
+  }
+  .images {
+    display: flex;
+    justify-content: flex-start;
+    padding: 20rpx 0rpx;
+    border-bottom: 1rpx solid #dfdfdf;
+    image {
+      width: 134rpx;
+      height: 134rpx;
+      margin-right: 8rpx;
+    }
+  }
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    padding: 10rpx 20rpx 10rpx 0rpx;
+    height: 80rpx;
+    .total {
+      color: #d81e06;
+      font-size: 32rpx;
+      line-height: 80rpx;
+    }
+  }
+  .submit {
+    position: absolute;
+    bottom: 20rpx;
+    left: 30rpx;
+    width: 690rpx;
+    border: #d81e06;
+    background: #d81e06;
+    color: #fff;
+  }
+}
+</style>

@@ -73,12 +73,23 @@
         padding: 20rpx 0rpx;
         width: 33%;
         text-align: center;
+        position: relative;
         image {
           width: 80rpx;
           height: 60rpx;
         }
         text {
           margin-top: 12rpx;
+        }
+        .dot {
+          position: absolute;
+          top: 4rpx;
+          right: 42rpx;
+          display: block;
+          width: 20rpx;
+          height: 20rpx;
+          border-radius: 50%;
+          background: #d81e06;
         }
       }
     }
@@ -136,16 +147,19 @@
           <view @tap='toOrderList(0)'>
             <image src='../images/payment.png' />
             <text>待付款</text>
+            <text class='dot' wx:if='{{topay}}'></text>
           </view>
           <view class='line'></view>
           <view @tap='toOrderList(2)'>
             <image src='../images/take.png' />
             <text>待收货</text>
+            <text class='dot' wx:if='{{toreceive}}'></text>
           </view>
           <view class='line'></view>
           <view @tap='toOrderList(3)'>
             <image src='../images/recommend.png' />
             <text>待评价</text>
+            <text class='dot' wx:if='{{tocomment}}'></text>
           </view>
         </view>
       </view>
@@ -171,12 +185,16 @@ export default class My extends wepy.page {
     userMobile: '',
     apiUserInfoMap: null,
     score: 0,
-    balance: 0
+    balance: 0,
+    topay: false,
+    toreceive: false,
+    tocomment: false
   }
-  onShow() {
+  onLoad() {
     this.getUserInfo()
     this.getUserApiInfo()
     this.getUserAmount()
+    this.requestAll()
   }
   methods = {
     toOrderList(index) {
@@ -258,6 +276,31 @@ export default class My extends wepy.page {
             content: '绑定失败',
             showCancel: false
           })
+        }
+      }
+    })
+  }
+  requestAll () {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/order/list',
+      data: {
+        token: that.$parent.globalData.token,
+      },
+      success: function (res) {
+        if(res.data.code == 0) {
+          res.data.data.orderList.forEach((item) => {
+            if(item.status == 0) {
+              that.topay = true
+            }
+            if(item.status == 2) {
+              that.toreceive = true
+            }
+            if(item.status == 3) {
+              that.tocomment = true
+            }
+          })
+          that.$apply()
         }
       }
     })

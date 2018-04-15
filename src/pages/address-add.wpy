@@ -56,7 +56,7 @@
 
 <script>
 import wepy from 'wepy'
-var commonCityData = require('../utils/city.js')
+// var commonCityData = require('../utils/city.js')
 export default class AddressAdd extends wepy.page {
   config = {
     "navigationBarTitleText": "新增地址"
@@ -72,7 +72,8 @@ export default class AddressAdd extends wepy.page {
     selCityIndex:0,
     selDistrictIndex:0,
     addressData: null,
-    id:''
+    id:'',
+    commonCityData: []
   }
   bindCancel () {
     wx.navigateBack({})
@@ -116,12 +117,12 @@ export default class AddressAdd extends wepy.page {
       })
       return
     }
-    var cityId = commonCityData.cityData[this.selProvinceIndex].cityList[this.selCityIndex].id;
+    var cityId = this.commonCityData[this.selProvinceIndex].cityList[this.selCityIndex].id;
     var districtId;
     if (this.selDistrict == "请选择" || !this.selDistrict){
       districtId = '';
     } else {
-      districtId = commonCityData.cityData[this.selProvinceIndex].cityList[this.selCityIndex].districtList[this.selDistrictIndex].id;
+      districtId = this.commonCityData[this.selProvinceIndex].cityList[this.selCityIndex].districtList[this.selDistrictIndex].id;
     }
     if (detailInfo == ""){
       wx.showModal({
@@ -151,7 +152,7 @@ export default class AddressAdd extends wepy.page {
       data: {
         token: that.$parent.globalData.token,
         id: apiAddid,
-        provinceId: commonCityData.cityData[that.selProvinceIndex].id,
+        provinceId: that.commonCityData[that.selProvinceIndex].id,
         cityId: cityId,
         districtId: districtId,
         linkMan:userName,
@@ -179,8 +180,8 @@ export default class AddressAdd extends wepy.page {
   initCityData (level, obj) {
     if(level == 1){
       var pinkArray = [];
-      for(var i = 0;i<commonCityData.cityData.length;i++){
-        pinkArray.push(commonCityData.cityData[i].name);
+      for(var i = 0;i<this.commonCityData.length;i++){
+        pinkArray.push(this.commonCityData[i].name);
       }
       this.provinces = pinkArray
     } else if (level == 2){
@@ -200,7 +201,7 @@ export default class AddressAdd extends wepy.page {
     }
   }
   bindPickerProvinceChange (event) {
-    var selIterm = commonCityData.cityData[event.detail.value]
+    var selIterm = this.commonCityData[event.detail.value]
     this.selProvince = selIterm.name
     this.selProvinceIndex = event.detail.value
     this.selCity = '请选择'
@@ -210,7 +211,7 @@ export default class AddressAdd extends wepy.page {
     this.initCityData(2, selIterm)
   }
   bindPickerCityChange (event) {
-    var selIterm = commonCityData.cityData[this.selProvinceIndex].cityList[event.detail.value];
+    var selIterm = this.commonCityData[this.selProvinceIndex].cityList[event.detail.value];
     this.selCity = selIterm.name
     this.selCityIndex = event.detail.value
     this.selDistrict = '请选择'
@@ -218,7 +219,7 @@ export default class AddressAdd extends wepy.page {
     this.initCityData(3, selIterm)
   }
   bindPickerChange (event) {
-    var selIterm = commonCityData.cityData[this.selProvinceIndex].cityList[this.selCityIndex].districtList[event.detail.value];
+    var selIterm = this.commonCityData[this.selProvinceIndex].cityList[this.selCityIndex].districtList[event.detail.value];
     if (selIterm && selIterm.name && event.detail.value) {
       this.selDistrict = selIterm.name,
       this.selDistrictIndex = event.detail.value
@@ -226,11 +227,13 @@ export default class AddressAdd extends wepy.page {
   }
   onLoad(e) {
     var that = this;
+    wx.showLoading();
+    this.commonCityData = this.$parent.globalData.commonCityData
+    this.$apply()
     this.initCityData(1);
     var id = e.id;
     if (id) {
       // 初始化原数据
-      wx.showLoading();
       wx.request({
         url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/user/shipping-address/detail',
         data: {
@@ -238,7 +241,6 @@ export default class AddressAdd extends wepy.page {
           id: id
         },
         success: function (res) {
-          wx.hideLoading();
           if (res.data.code == 0) {
             that.id = id
             that.addressData = {
@@ -253,6 +255,7 @@ export default class AddressAdd extends wepy.page {
             that.selDistrict = res.data.data.areaStr
             that.$apply()
             that.setDBSaveAddressId(res.data.data);
+            wx.hideLoading();
             return;
           } else {
             wx.showModal({
@@ -269,19 +272,20 @@ export default class AddressAdd extends wepy.page {
       that.selProvince = '请选择'
       that.selCity = '请选择'
       that.selDistrict = '请选择'
+      wx.hideLoading()
       that.$apply()
     }
   }
   setDBSaveAddressId (data) {
     var retSelIdx = 0;
-    for (var i = 0; i < commonCityData.cityData.length; i++) {
-      if (data.provinceId == commonCityData.cityData[i].id) {
+    for (var i = 0; i < this.commonCityData.length; i++) {
+      if (data.provinceId == this.commonCityData[i].id) {
         this.selProvinceIndex = i;
-        for (var j = 0; j < commonCityData.cityData[i].cityList.length; j++) {
-          if (data.cityId == commonCityData.cityData[i].cityList[j].id) {
+        for (var j = 0; j < this.commonCityData[i].cityList.length; j++) {
+          if (data.cityId == this.commonCityData[i].cityList[j].id) {
             this.selCityIndex = j;
-            for (var k = 0; k < commonCityData.cityData[i].cityList[j].districtList.length; k++) {
-              if (data.districtId == commonCityData.cityData[i].cityList[j].districtList[k].id) {
+            for (var k = 0; k < this.commonCityData[i].cityList[j].districtList.length; k++) {
+              if (data.districtId == this.commonCityData[i].cityList[j].districtList[k].id) {
                 this.selDistrictIndex = k;
               }
             }
@@ -324,18 +328,18 @@ export default class AddressAdd extends wepy.page {
         let cityName = res.cityName;
         let diatrictName = res.countyName;
         let retSelIdx = 0;
-        for (var i = 0; i < commonCityData.cityData.length; i++) {
-          if (provinceName == commonCityData.cityData[i].name) {
+        for (var i = 0; i < that.commonCityData.length; i++) {
+          if (provinceName == that.commonCityData[i].name) {
             let eventJ = { detail: { value:i }};
             that.bindPickerProvinceChange(eventJ);
             that.selProvinceIndex = i;
-            for (var j = 0; j < commonCityData.cityData[i].cityList.length; j++) {
-              if (cityName == commonCityData.cityData[i].cityList[j].name) {
+            for (var j = 0; j < that.commonCityData[i].cityList.length; j++) {
+              if (cityName == that.commonCityData[i].cityList[j].name) {
                 //that.data.selCityIndex = j;
                 eventJ = { detail: { value: j } };
                 that.bindPickerCityChange(eventJ);
-                for (var k = 0; k < commonCityData.cityData[i].cityList[j].districtList.length; k++) {
-                  if (diatrictName == commonCityData.cityData[i].cityList[j].districtList[k].name) {
+                for (var k = 0; k < that.commonCityData[i].cityList[j].districtList.length; k++) {
+                  if (diatrictName == that.commonCityData[i].cityList[j].districtList[k].name) {
                     //that.data.selDistrictIndex = k;
                     eventJ = { detail: { value: k } };
                     that.bindPickerChange(eventJ);

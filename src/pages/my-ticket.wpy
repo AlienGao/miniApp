@@ -38,6 +38,15 @@
       font-size: 26rpx;
     }
   }
+  .no-fav {
+    padding: 200rpx 30rpx;
+    image {
+      width: 200rpx;
+      height: 200rpx;
+      display: block;
+      margin: 0 auto;
+    }
+  }
 }
 </style>
 
@@ -57,6 +66,12 @@
         </view>
       </view>
     </repeat>
+    <view wx:if='{{tickets.length == 0}}' class='no-fav'>
+      <image src='../images/fav.png' />
+      <view style='font-size:30rpx;color:#8a8a8a;margin-top:30rpx;text-align:center'>
+        还没有收藏呢
+      </view>
+    </view>
   </view>
 </template>
 
@@ -68,7 +83,7 @@ export default class MyTicket extends wepy.page {
     navigationBarTitleText: '我的优惠券'
   }
   data = {
-    tickets: null
+    tickets: []
   }
   onLoad(e) {
     const that = this

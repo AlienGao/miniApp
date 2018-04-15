@@ -50,13 +50,13 @@ export default class extends wepy.app {
       'pages/newMember',
       'pages/hot-goods',
       'pages/special-price',
-      'pages/sign',
       'pages/my-ticket',
       'pages/select-address',
       'pages/address-add',
       'pages/my-fav',
       'pages/pay',
-      'pages/order-list'
+      'pages/order-list',
+      'pages/order-reputation'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -90,6 +90,7 @@ export default class extends wepy.app {
   }
   onLaunch() {
     this.login()
+    this.getAddress()
   }
   login () {
     var that = this;
@@ -165,6 +166,24 @@ export default class extends wepy.app {
             })
           }
         })
+      }
+    })
+  }
+  getAddress () {
+    const that = this
+    wepy.request({
+      url: 'https://api.it120.cc/' + that.globalData.subDomain + '/json/list',
+      success: function(res) {
+        if(res.data.code == 0) {
+          const result = []
+          res.data.data.forEach((item) => {
+            item.jsonData.content.forEach((city) => {
+              result.push(city)
+            })
+          })
+          that.globalData.commonCityData = result
+          // console.log(result)
+        }
       }
     })
   }

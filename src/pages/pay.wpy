@@ -230,7 +230,6 @@ export default class Pay extends wepy.page {
 <style lang='less'>
 .container {
   width: 100vw;
-  background: #fff;
   min-height: 100vh;
 }
 .top_container {
@@ -357,16 +356,16 @@ export default class Pay extends wepy.page {
   .remark {
     display: flex;
     justify-content: flex-start;
-    padding: 20rpx 0rpx;
+    padding: 0rpx 0rpx 20rpx 0rpx;
     font-size: 32rpx;
     text {
       flex-grow: 1;
+      margin-top: 12rpx;
     }
     textarea {
       flex-flow:3;
-      font-size:32rpx;
-      height:42rpx;
-      margin-top:2rpx;
+      padding: 0rpx;
+      line-height: 1;
     }
   }
 }
@@ -378,6 +377,7 @@ export default class Pay extends wepy.page {
   display: flex;
   justify-content: space-between;
   font-size: 32rpx;
+  background: #fff;
   image {
     width: 36rpx;
     height: 36rpx;

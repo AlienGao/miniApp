@@ -344,13 +344,7 @@ export default class TabBar extends wepy.component {
       } else if (this.orderNumber > 0 && this.type == 'buyNow') {
         wx.setStorage({
           key: 'buyNow',
-          data: {
-            pic: that.goodDetail.basicInfo.pic,
-            name: that.goodDetail.basicInfo.name,
-            originalPrice: that.goodDetail.basicInfo.originalPrice,
-            minPrice: that.goodDetail.basicInfo.minPrice,
-            number: that.orderNumber
-          }
+          data: storeGood
         })
         wx.navigateTo({
           url: '/pages/pay?from=buyNow'

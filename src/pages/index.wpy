@@ -11,6 +11,24 @@
     padding: 8rpx;
     box-sizing: border-box;
   }
+  .sign {
+    width: 180rpx;
+    height: 180rpx;
+    text-align: center;
+    line-height: 180rpx;
+    border-radius: 50%;
+    font-size: 32rpx;
+    color: #fff;
+    background: rgba(246,54,55,0.6);
+    font-size: 36rpx;
+    position: fixed;
+    bottom: 30rpx;
+    right: 30rpx;
+    z-index: 999;
+  }
+  .active {
+    font-size: 22rpx;
+  }
 }
 </style>
 <template>
@@ -20,6 +38,9 @@
     <view>
       <view class='brand'>推荐商品</view>
       <goods></goods>
+    </view>
+    <view class="sign {{active ? 'active' : ''}}" @tap='sign'>
+      {{sign}}
     </view>
     <toast />
   </view>
@@ -45,20 +66,52 @@
       coupons: Coupons,
       goods: Goods
     }
-
     data = {
+      sign: '签到',
+      active: false
     }
-
-    computed = {
-    }
-
-    methods = {
-    }
-
-    events = {
-    }
-
     onLoad() {
+      const that = this
+      that.active = false
+      setTimeout(() => {
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/score/today-signed',
+          data: {
+            token: that.$parent.globalData.token
+          },
+          success: function(res) {
+            if(res.data.code == 0) {
+              that.active = true
+              that.sign = '已经连续'+res.data.data.continuous+'天签到'
+              that.$apply()
+            }
+          }
+        })
+      },500)
+    }
+    methods = {
+      sign() {
+        const that = this
+        wepy.request({
+          url: 'https://api.it120.cc/' + that.$parent.globalData.subDomain + '/score/sign',
+          data: {
+            token: that.$parent.globalData.token
+          },
+          success: function (res) {
+            if(res.data.code == 0) {
+              that.sign = '已经连续'+res.data.data.continuous+'天签到'
+              that.active = true
+              that.$apply()
+            } else if (res.data.code == 10000) {
+              wx.showToast({
+                title: '不能重复签到哦',
+                image: '../images/fail.png',
+                duration: 1000
+              })
+            }
+          }
+        })
+      }
     }
   }
 </script>
