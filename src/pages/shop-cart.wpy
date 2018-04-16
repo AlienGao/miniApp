@@ -2,7 +2,7 @@
   <view class='shop_cart'>
     <repeat for='{{orders}}' key='index' index='index' item='item'>
       <movable-area>
-        <movable-view @htouchmove='onhtouchmove({{item}})' direction="horizontal" x="{{isShow !== item.goodsId ? '0' : '146'}}" out-of-bounds inertia>
+        <movable-view direction="horizontal" inertia friction='{{1}}' damping='{{1000}}'>
           <view class='container'>
             <view class="choose {{item.isChoosed == true ? 'active' : ''}}" @tap='chooseGood({{item}})'>
               <image wx:if='{{item.isChoosed == true}}' src='../images/choose.png'/>
@@ -15,7 +15,7 @@
                 <wxc-counter class='counter_{{index}}' max='{{1000}}' min="1" id='{{index}}' @changenumber="onChangeNumber"></wxc-counter>
               </view>
             </view>
-            <view wx:if='{{item.goodsId == isShow}}' class='delete' @tap='delete({{item.goodsId}})'>
+            <view class='delete' @tap='delete({{item.goodsId}})'>
               删除
             </view>
           </view>
@@ -28,7 +28,7 @@
       </view>
       <view class='content'>
         <text @tap='onChooseAll'>全选</text>
-        <text style='color: #d81e06'>合计：￥ {{total}}</text>
+        <text style='color: #d81e06;width:240rpx;text-align:right;'>合计：￥ {{total}}</text>
       </view>
       <button plain @tap='buyNow'>下单</button>
     </view>
@@ -57,7 +57,6 @@ export default class Pay extends wepy.page {
   data = {
     orders: [],
     number: 1,
-    isShow: '',
     chooseAll: false, // 是否全选UI
     total: 0
   }
@@ -75,8 +74,8 @@ export default class Pay extends wepy.page {
       })
       this.calcTotal()
     },
-    onhtouchmove(item) {
-      this.isShow = item.goodsId
+    onhtouchmove(index) {
+      this.x[index] = this.x[index] == 0 ? 146 : 0
     },
     delete(e) {
       let array = []
@@ -193,23 +192,25 @@ export default class Pay extends wepy.page {
 .shop_cart {
   movable-area {
     width: 100vw;
-    height: 240rpx;
+    height: 220rpx;
     background: #fff;
     border-bottom: 2rpx solid #dfdfdf;
+    overflow-x: hidden;
   }
   movable-view {
-    width: 120vw;
+    width: 896rpx;
     height: 220rpx;
-    padding: 10rpx 0rpx;
     position: absolute;
     right: 0rpx;
     top: 0rpx;
+    overflow: hidden;
   }
   .container {
     display: flex;
     justify-content: flex-start;
     padding-left: 20rpx;
-    height: 240rpx;
+    height: 220rpx;
+    width: 896rpx;
     margin-bottom: 120rpx;
     .choose {
       width:32rpx;
@@ -262,7 +263,8 @@ export default class Pay extends wepy.page {
     .delete {
       background: red;
       width: 146rpx;
-      line-height: 240rpx;
+      height: 220rpx;
+      line-height: 220rpx;
       text-align: center;
       color: #fff;
     }

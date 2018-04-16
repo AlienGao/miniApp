@@ -2,7 +2,7 @@
   <view class="shop_cart">
     <block wx:for="{{orders}}" wx:for-index="index" wx:for-item="item" wx:key="index">
       <movable-area>
-        <movable-view bindhtouchmove="onhtouchmove" direction="horizontal" x="{{isShow !== item.goodsId ? '0' : '146'}}" out-of-bounds="out-of-bounds" inertia="inertia" data-wpyonhtouchmove-a="{{item}}">
+        <movable-view direction="horizontal" inertia="inertia" friction="{{1}}" damping="{{1000}}">
           <view class="container">
             <view class="choose {{item.isChoosed == true ? 'active' : ''}}" bindtap="chooseGood" data-wpychoosegood-a="{{item}}">
               <image  wx:if="{{item.isChoosed == true}}" src="../images/choose.png"/>
@@ -15,7 +15,7 @@
                 <wxc-counter class="counter_{{index}}" max="{{1000}}" min="1" id="{{index}}" bindchangenumber="onChangeNumber"/>
               </view>
             </view>
-            <view  wx:if="{{item.goodsId == isShow}}" class="delete" bindtap="delete" data-wpydelete-a="{{item.goodsId}}">
+            <view class="delete" bindtap="delete" data-wpydelete-a="{{item.goodsId}}">
               删除
             </view>
           </view>
@@ -24,11 +24,11 @@
     </block>
     <view class="fixedBar">
       <view class="choose {{chooseAll == true ? 'active' : ''}}" bindtap="onChooseAll">
-        <image wx:if="{{chooseAll == true}}" src="../images/choose.png"/>
+        <image  wx:if="{{chooseAll == true}}" src="../images/choose.png"/>
       </view>
       <view class="content">
         <text bindtap="onChooseAll">全选</text>
-        <text style="color: #d81e06">合计：￥ {{total}}</text>
+        <text style="color: #d81e06;width:240rpx;text-align:right;">合计：￥ {{total}}</text>
       </view>
       <button plain bindtap="buyNow">下单</button>
     </view>

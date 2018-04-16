@@ -17,6 +17,13 @@
     float: right;
   }
 }
+.noReputation {
+  font-size: 26rpx;
+  color: #c7c7c7;
+  text-align: center;
+  line-height: 40rpx;
+  padding:30rpx 0rpx 5rpx;
+}
 .showall-container {
   padding: 16rpx;
 }
@@ -35,7 +42,7 @@
 
 <template>
   <view class='reputation-content'>
-    <view @tap='lookall' wx:if="{{!isShowAll}}">
+    <view @tap='lookall' wx:if="{{!isShowAll && content.length > 0}}">
       <view class='user'>
         <image src='{{filterData.avatarUrl}}' />
         <text>{{filterData.nick}}</text>
@@ -44,6 +51,9 @@
       <view class='goodReputation'>
         {{filterData.goodReputationRemark}}
       </view>
+    </view>
+    <view class='noReputation' wx:if="{{!isShowAll && content.length == 0}}">
+      <i class='fa fa-commenting-o' style='margin-right: 10rpx'></i>暂无评价
     </view>
     <view wx:if='{{isShowAll}}' class='showall-container'>
       <repeat for='{{content}}' key='index' index='index' item='item'>
@@ -131,6 +141,8 @@ export default class ReputationContent extends wepy.component {
           this.content.push(user)
           // 查看好中差选项
         } else {
+          this.content = []
+          this.filterData = null
           that.reputation.map((item) => {
             if(item.goods.goodReputation == type) {
               that.content.push({
@@ -143,7 +155,7 @@ export default class ReputationContent extends wepy.component {
           })
         }
         that.filterData = that.content[0]
-        that.$apply() 
+        that.$apply()
         // 查看所有评论
       } else {
         that.reputation.map((item) => {

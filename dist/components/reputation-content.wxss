@@ -14,6 +14,13 @@
   font-size: 24rpx;
   float: right;
 }
+.noReputation {
+  font-size: 26rpx;
+  color: #c7c7c7;
+  text-align: center;
+  line-height: 40rpx;
+  padding: 30rpx 0rpx 5rpx;
+}
 .showall-container {
   padding: 16rpx;
 }

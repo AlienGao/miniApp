@@ -1,23 +1,25 @@
 @import "./../npm/wepy-com-toast/toast.wxss";
 .shop_cart movable-area {
   width: 100vw;
-  height: 240rpx;
+  height: 220rpx;
   background: #fff;
   border-bottom: 2rpx solid #dfdfdf;
+  overflow-x: hidden;
 }
 .shop_cart movable-view {
-  width: 120vw;
+  width: 896rpx;
   height: 220rpx;
-  padding: 10rpx 0rpx;
   position: absolute;
   right: 0rpx;
   top: 0rpx;
+  overflow: hidden;
 }
 .shop_cart .container {
   display: flex;
   justify-content: flex-start;
   padding-left: 20rpx;
-  height: 240rpx;
+  height: 220rpx;
+  width: 896rpx;
   margin-bottom: 120rpx;
 }
 .shop_cart .container .choose {
@@ -73,7 +75,8 @@
 .shop_cart .container .delete {
   background: red;
   width: 146rpx;
-  line-height: 240rpx;
+  height: 220rpx;
+  line-height: 220rpx;
   text-align: center;
   color: #fff;
 }

@@ -1,1 +1,247 @@
-"use strict";function _interopRequireDefault(e){return e&&e.__esModule?e:{default:e}}Object.defineProperty(exports,"__esModule",{value:!0});var _event=require("./event.js"),_event2=_interopRequireDefault(_event),_util=require("./util.js"),_util2=_interopRequireDefault(_util),PAGE_EVENT=["onLoad","onReady","onShow","onHide","onUnload","onPullDownRefresh","onReachBottom","onShareAppMessage","onPageScroll","onTabItemTap"],APP_EVENT=["onLaunch","onShow","onHide","onError"],$bindEvt=function e(n,t,o){t.$prefix=_util2.default.camelize(o||""),Object.getOwnPropertyNames(t.components||{}).forEach(function(a){var r=t.components[a],i=new r;i.$initMixins(),i.$name=a;var c=o?o+i.$name+"$":"$"+i.$name+"$";t.$com[a]=i,e(n,i,c)}),Object.getOwnPropertyNames(t.constructor.prototype||[]).forEach(function(e){"constructor"!==e&&-1===PAGE_EVENT.indexOf(e)&&(n[e]=function(){t.constructor.prototype[e].apply(t,arguments),t.$apply()})});var a=Object.getOwnPropertyNames(t.methods||[]);return t.$mixins.forEach(function(e){a=a.concat(Object.getOwnPropertyNames(e.methods||[]))}),a.forEach(function(e,o){n[t.$prefix+e]=function(n){for(var o=arguments.length,a=Array(o>1?o-1:0),r=1;r<o;r++)a[r-1]=arguments[r];var i=new _event2.default("system",this,n.type);i.$transfor(n);var c=[],p=0,s=void 0,f=void 0,u=void 0;if(n.currentTarget&&n.currentTarget.dataset){for(s=n.currentTarget.dataset;void 0!==s["wpy"+e.toLowerCase()+(f=String.fromCharCode(65+p++))];)c.push(s["wpy"+e.toLowerCase()+f]);void 0!==s.comIndex&&(u=s.comIndex)}if(void 0!==u){u=(""+u).split("-");for(var l=u.length,h=l;l-- >0;){h=l;for(var $=t;h-- >0;)$=$.$parent;$.$setIndex(u.shift())}}a=a.concat(c);var d=void 0,_=void 0,v=t.methods[e];return v&&(d=v.apply(t,a.concat(i))),t.$mixins.forEach(function(n){n.methods[e]&&(_=n.methods[e].apply(t,a.concat(i)))}),t.$apply(),v?d:_}}),n};exports.default={$createApp:function(e,n){var t={},o=new e;return this.$instance||(o.$init(this,n),this.$instance=o,this.$appConfig=n),2===arguments.length&&!0===arguments[1]&&(t.$app=o),o.$wxapp=getApp(),APP_EVENT=APP_EVENT.concat(n.appEvents||[]),PAGE_EVENT=PAGE_EVENT.concat(n.pageEvents||[]),APP_EVENT.forEach(function(e){t[e]=function(){for(var n=arguments.length,t=Array(n),a=0;a<n;a++)t[a]=arguments[a];var r=void 0;return!o.$wxapp&&(o.$wxapp=getApp()),o[e]&&(r=o[e].apply(o,t)),r}}),t},$createPage:function(e,n){var t=this,o={},a=new e;return"string"==typeof n&&(this.$instance.$pages["/"+n]=a),a.$initMixins(),("boolean"==typeof n&&n||3===arguments.length&&!0===arguments[2])&&(o.$page=a),o.onLoad=function(){for(var n=arguments.length,o=Array(n),r=0;r<n;r++)o[r]=arguments[r];a.$name=e.name||"unnamed",a.$init(this,t.$instance,t.$instance);var i=t.$instance.__prevPage__,c={};c.from=i||void 0,i&&Object.keys(i.$preloadData).length>0&&(c.preload=i.$preloadData,i.$preloadData={}),a.$prefetchData&&Object.keys(a.$prefetchData).length>0&&(c.prefetch=a.$prefetchData,a.$prefetchData={}),o.push(c),[].concat(a.$mixins,a).forEach(function(e){e.onLoad&&e.onLoad.apply(a,o)}),a.$apply()},o.onShow=function(){for(var e=arguments.length,n=Array(e),o=0;o<e;o++)n[o]=arguments[o];t.$instance.__prevPage__=a,[].concat(a.$mixins,a).forEach(function(e){e.onShow&&e.onShow.apply(a,n)});var r=getCurrentPages(),i=r[r.length-1].__route__,c=r[r.length-1].__wxWebviewId__;t.$instance.__wxWebviewId__!==c&&(a.$wxpage=this,t.$instance.__route__=i,t.$instance.__wxWebviewId__=c,[].concat(a.$mixins,a).forEach(function(e){e.onRoute&&e.onRoute.apply(a,n)})),a.$apply()},PAGE_EVENT.forEach(function(e){"onLoad"!==e&&"onShow"!==e&&(o[e]=function(){for(var n=arguments.length,t=Array(n),o=0;o<n;o++)t[o]=arguments[o];var r=void 0;return"onShareAppMessage"===e?(a[e]&&(r=a[e].apply(a,t)),r):([].concat(a.$mixins,a).forEach(function(n){n[e]&&n[e].apply(a,t)}),"onPageScroll"!==e&&a.$apply(),r)})}),a.onShareAppMessage||delete o.onShareAppMessage,-1===[].concat(a.$mixins,a).findIndex(function(e){return e.onPageScroll})&&delete o.onPageScroll,$bindEvt(o,a,"")}};
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _event = require('./event.js');
+
+var _event2 = _interopRequireDefault(_event);
+
+var _util = require('./util.js');
+
+var _util2 = _interopRequireDefault(_util);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var PAGE_EVENT = ['onLoad', 'onReady', 'onShow', 'onHide', 'onUnload', 'onPullDownRefresh', 'onReachBottom', 'onShareAppMessage', 'onPageScroll', 'onTabItemTap'];
+var APP_EVENT = ['onLaunch', 'onShow', 'onHide', 'onError'];
+
+var $bindEvt = function $bindEvt(config, com, prefix) {
+    com.$prefix = _util2.default.camelize(prefix || '');
+    Object.getOwnPropertyNames(com.components || {}).forEach(function (name) {
+        var cClass = com.components[name];
+        var child = new cClass();
+        child.$initMixins();
+        child.$name = name;
+        var comPrefix = prefix ? prefix + child.$name + '$' : '$' + child.$name + '$';
+
+        com.$com[name] = child;
+
+        $bindEvt(config, child, comPrefix);
+    });
+    Object.getOwnPropertyNames(com.constructor.prototype || []).forEach(function (prop) {
+        if (prop !== 'constructor' && PAGE_EVENT.indexOf(prop) === -1) {
+            config[prop] = function () {
+                com.constructor.prototype[prop].apply(com, arguments);
+                com.$apply();
+            };
+        }
+    });
+
+    var allMethods = Object.getOwnPropertyNames(com.methods || []);
+
+    com.$mixins.forEach(function (mix) {
+        allMethods = allMethods.concat(Object.getOwnPropertyNames(mix.methods || []));
+    });
+
+    allMethods.forEach(function (method, i) {
+        config[com.$prefix + method] = function (e) {
+            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+                args[_key - 1] = arguments[_key];
+            }
+
+            var evt = new _event2.default('system', this, e.type);
+            evt.$transfor(e);
+            var wepyParams = [],
+                paramsLength = 0,
+                tmp = void 0,
+                p = void 0,
+                comIndex = void 0;
+            if (e.currentTarget && e.currentTarget.dataset) {
+                tmp = e.currentTarget.dataset;
+                while (tmp['wpy' + method.toLowerCase() + (p = String.fromCharCode(65 + paramsLength++))] !== undefined) {
+                    wepyParams.push(tmp['wpy' + method.toLowerCase() + p]);
+                }
+                if (tmp.comIndex !== undefined) {
+                    comIndex = tmp.comIndex;
+                }
+            }
+
+            if (comIndex !== undefined) {
+                comIndex = ('' + comIndex).split('-');
+                var level = comIndex.length,
+                    _tmp = level;
+                while (level-- > 0) {
+                    _tmp = level;
+                    var tmpcom = com;
+                    while (_tmp-- > 0) {
+                        tmpcom = tmpcom.$parent;
+                    }
+                    tmpcom.$setIndex(comIndex.shift());
+                }
+            }
+
+            args = args.concat(wepyParams);
+            var rst = void 0,
+                mixRst = void 0;
+            var comfn = com.methods[method];
+            if (comfn) {
+                rst = comfn.apply(com, args.concat(evt));
+            }
+            com.$mixins.forEach(function (mix) {
+                mix.methods[method] && (mixRst = mix.methods[method].apply(com, args.concat(evt)));
+            });
+            com.$apply();
+            return comfn ? rst : mixRst;
+        };
+    });
+    return config;
+};
+
+exports.default = {
+    $createApp: function $createApp(appClass, appConfig) {
+        var config = {};
+        var app = new appClass();
+
+        if (!this.$instance) {
+            app.$init(this, appConfig);
+            this.$instance = app;
+            this.$appConfig = appConfig;
+        }
+
+        if (arguments.length === 2 && arguments[1] === true) {
+            config.$app = app;
+        }
+
+        app.$wxapp = getApp();
+
+        APP_EVENT = APP_EVENT.concat(appConfig.appEvents || []);
+        PAGE_EVENT = PAGE_EVENT.concat(appConfig.pageEvents || []);
+
+        APP_EVENT.forEach(function (v) {
+            config[v] = function () {
+                for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                    args[_key2] = arguments[_key2];
+                }
+
+                var rst = void 0;
+                !app.$wxapp && (app.$wxapp = getApp());
+                app[v] && (rst = app[v].apply(app, args));
+                return rst;
+            };
+        });
+        return config;
+    },
+    $createPage: function $createPage(pageClass, pagePath) {
+        var self = this;
+        var config = {},
+            k = void 0;
+        var page = new pageClass();
+        if (typeof pagePath === 'string') {
+            this.$instance.$pages['/' + pagePath] = page;
+        }
+        page.$initMixins();
+
+        if (typeof pagePath === 'boolean' && pagePath || arguments.length === 3 && arguments[2] === true) config.$page = page;
+
+        config.onLoad = function () {
+            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+                args[_key3] = arguments[_key3];
+            }
+
+            page.$name = pageClass.name || 'unnamed';
+            page.$init(this, self.$instance, self.$instance);
+
+            var prevPage = self.$instance.__prevPage__;
+            var secParams = {};
+            secParams.from = prevPage ? prevPage : undefined;
+
+            if (prevPage && Object.keys(prevPage.$preloadData).length > 0) {
+                secParams.preload = prevPage.$preloadData;
+                prevPage.$preloadData = {};
+            }
+            if (page.$prefetchData && Object.keys(page.$prefetchData).length > 0) {
+                secParams.prefetch = page.$prefetchData;
+                page.$prefetchData = {};
+            }
+            args.push(secParams);
+
+            [].concat(page.$mixins, page).forEach(function (mix) {
+                mix['onLoad'] && mix['onLoad'].apply(page, args);
+            });
+
+            page.$apply();
+        };
+
+        config.onShow = function () {
+            for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+                args[_key4] = arguments[_key4];
+            }
+
+            self.$instance.__prevPage__ = page;
+
+            [].concat(page.$mixins, page).forEach(function (mix) {
+                mix['onShow'] && mix['onShow'].apply(page, args);
+            });
+
+            var pages = getCurrentPages();
+            var pageId = pages[pages.length - 1].__route__;
+            var webViewId = pages[pages.length - 1].__wxWebviewId__;
+
+            if (self.$instance.__wxWebviewId__ !== webViewId) {
+
+                page.$wxpage = this;
+
+                self.$instance.__route__ = pageId;
+                self.$instance.__wxWebviewId__ = webViewId;
+
+                [].concat(page.$mixins, page).forEach(function (mix) {
+                    mix['onRoute'] && mix['onRoute'].apply(page, args);
+                });
+            }
+
+            page.$apply();
+        };
+
+        PAGE_EVENT.forEach(function (v) {
+            if (v !== 'onLoad' && v !== 'onShow') {
+                config[v] = function () {
+                    for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+                        args[_key5] = arguments[_key5];
+                    }
+
+                    var rst = void 0;
+
+                    if (v === 'onShareAppMessage') {
+                        page[v] && (rst = page[v].apply(page, args));
+                        return rst;
+                    }
+
+                    [].concat(page.$mixins, page).forEach(function (mix) {
+                        mix[v] && mix[v].apply(page, args);
+                    });
+
+                    if (v !== 'onPageScroll') {
+                        page.$apply();
+                    }
+
+                    return rst;
+                };
+            }
+        });
+
+        if (!page.onShareAppMessage) {
+            delete config.onShareAppMessage;
+        }
+
+        if ([].concat(page.$mixins, page).findIndex(function (mix) {
+            return mix['onPageScroll'];
+        }) === -1) {
+            delete config.onPageScroll;
+        }
+
+        return $bindEvt(config, page, '');
+    }
+};
+//# sourceMappingURL=base.js.map

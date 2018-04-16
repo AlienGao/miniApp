@@ -13,7 +13,7 @@
     <view class="reputation-container">
       
   <view class="reputation-content">
-    <view bindtap="$reputationContent$lookall"  wx:if="{{!$reputationContent$isShowAll}}">
+    <view bindtap="$reputationContent$lookall"  wx:if="{{!$reputationContent$isShowAll && $reputationContent$content.length > 0}}">
       <view class="user">
         <image src="{{$reputationContent$filterData.avatarUrl}}"/>
         <text>{{$reputationContent$filterData.nick}}</text>
@@ -23,7 +23,10 @@
         {{$reputationContent$filterData.goodReputationRemark}}
       </view>
     </view>
-    <view  wx:if="{{$reputationContent$isShowAll}}" class="showall-container">
+    <view class="noReputation"  wx:if="{{!$reputationContent$isShowAll && $reputationContent$content.length == 0}}">
+      <i class="fa fa-commenting-o" style="margin-right: 10rpx"/>暂无评价
+    </view>
+    <view wx:if="{{$reputationContent$isShowAll}}" class="showall-container">
       <block wx:for="{{$reputationContent$content}}" wx:for-index="$reputationContent$index" wx:for-item="$reputationContent$item" wx:key="$reputationContent$index">
         <view class="user">
           <image src="{{$reputationContent$item.avatarUrl}}"/>
