@@ -4,24 +4,13 @@
 > ![](https://github.com/GaoJun9521/miniApp/blob/master/forth.jpg?raw=true)
 先放上二维码，项目还在审核中。。。
 
-####  如何运行
-1. npm install
-2. npm run dev
-
 #### **开发使用说明(重要)**
-```
-使用微信开发者工具-->添加项目，项目目录请选择dist目录。
-微信开发者工具-->项目-->关闭ES6转ES5。 重要：漏掉此项会运行报错。
-微信开发者工具-->项目-->关闭上传代码时样式自动补全。 重要：某些情况下漏掉此项也会运行报错。
-微信开发者工具-->项目-->关闭代码压缩上传。 重要：开启后，会导致真机computed, props.sync 等等属性失效。
-```
-### **wepy开发文档地址**
 
-https://tencent.github.io/wepy/
-
-#### **小程序开发文档**
-
-http://mp.weixin.qq.com/debug/wxadoc/dev/
+> 1. 使用微信开发者工具-->添加项目，项目目录请选择dist目录。（由于在minUI组件中加了两个函数，所以上传时保留了dist）
+2. 微信开发者工具-->项目-->关闭ES6转ES5。 重要：漏掉此项会运行报错。
+3. 微信开发者工具-->项目-->关闭上传代码时样式自动补全。 重要：某些情况下漏掉此项也会运行报错。
+4. 微信开发者工具-->项目-->关闭代码压缩上传。 重要：开启后，会导致真机computed, props.sync 等等属性失效。
+5. 调试基础库版本 **1.9.94**
 
 ### **项目预览**
 ![](https://github.com/GaoJun9521/miniApp/blob/master/first.gif?raw=true)![](https://github.com/GaoJun9521/miniApp/blob/master/second.gif?raw=true)
