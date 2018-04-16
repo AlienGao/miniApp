@@ -1,0 +1,19 @@
+
+  <view class="fav-container">
+    <block  wx:if="{{favs.length > 0}}" wx:for="{{favs}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <view class="fav" bindtap="lookDetail" data-wpylookdetail-a="{{item.goodsId}}">
+        <image src="{{item.pic}}"/>
+        <view class="content">
+          <text class="name">{{item.goodsName}}</text>
+          <text class="time">收藏时间: {{item.dateAdd}}</text>
+          <button plain="true">查看详情</button>
+        </view>
+      </view>
+    </block>
+    <view  wx:if="{{favs.length == 0}}" class="no-fav">
+      <image src="../images/fav.png"/>
+      <view style="font-size:30rpx;color:#8a8a8a;margin-top:30rpx;text-align:center">
+        还没有收藏呢
+      </view>
+    </view>
+  </view>

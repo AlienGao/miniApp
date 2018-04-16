@@ -1,0 +1,18 @@
+.options {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10rpx;
+}
+.options view {
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  background: rgba(246, 54, 55, 0.2);
+  font-size: 24rpx;
+  text-align: center;
+  line-height: 36rpx;
+  margin-right: 22rpx;
+  color: #666;
+}
+.options .active {
+  background: rgba(246, 54, 55, 0.4);
+}

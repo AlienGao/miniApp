@@ -1,0 +1,57 @@
+.order {
+  padding-left: 20rpx;
+  background: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+.order .top {
+  border-bottom: 1rpx solid #dfdfdf;
+}
+.order .top view {
+  padding: 10rpx 20rpx 10rpx 0rpx;
+  font-size: 32rpx;
+}
+.order .top title {
+  border-bottom: 1rpx solid #dfdfdf;
+}
+.order .top .content {
+  display: flex;
+  justify-content: space-between;
+  height: 60rpx;
+  line-height: 60rpx;
+}
+.order .top .orderNumber {
+  height: 40rpx;
+  line-height: 40rpx;
+}
+.order .images {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20rpx 0rpx;
+  border-bottom: 1rpx solid #dfdfdf;
+}
+.order .images image {
+  width: 134rpx;
+  height: 134rpx;
+  margin-right: 8rpx;
+}
+.order .bottom {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 20rpx 10rpx 0rpx;
+  height: 80rpx;
+}
+.order .bottom .total {
+  color: #d81e06;
+  font-size: 32rpx;
+  line-height: 80rpx;
+}
+.order .submit {
+  position: absolute;
+  bottom: 20rpx;
+  left: 30rpx;
+  width: 690rpx;
+  border: #d81e06;
+  background: #d81e06;
+  color: #fff;
+}

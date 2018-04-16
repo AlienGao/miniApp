@@ -1,0 +1,17 @@
+.coupons-container {
+  display: flex;
+  justify-content: space-around;
+  padding: 24rpx;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+.item image {
+  width: 100rpx;
+  height: 100rpx;
+}
+.item text {
+  display: block;
+  font-size: 28rpx;
+  text-align: center;
+}

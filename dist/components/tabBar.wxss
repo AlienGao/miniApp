@@ -1,0 +1,150 @@
+.tabBar {
+  position: fixed;
+  bottom: 0rpx;
+  left: 0rpx;
+  right: 0rpx;
+  width: 100%;
+  display: flex;
+  background: #fff;
+  text-align: center;
+  height: 102rpx;
+  font-size: 32rpx;
+  line-height: 102rpx;
+  color: #fff;
+  box-shadow: 0 -4rpx 12rpx 0 #999;
+}
+.tabBar .button-group {
+  display: flex;
+  width: 40%;
+}
+.tabBar .button-group view {
+  width: 33%;
+  border-right: 1px solid #ccc;
+}
+.tabBar .button-group view image {
+  margin: 26rpx auto;
+  width: 60rpx;
+  height: 50rpx;
+  display: block;
+}
+.tabBar .button-group button {
+  width: 33%;
+  padding: 0rpx;
+  border: none;
+  border-right: 1px solid #ccc;
+  border-radius: 0;
+}
+.tabBar .button-group button image {
+  margin: 22rpx auto;
+  width: 60rpx;
+  height: 60rpx;
+  display: block;
+}
+.tabBar .shop-cart {
+  width: 30%;
+  background: #FF622B;
+}
+.tabBar .buy-now {
+  width: 30%;
+  background: #FF3E4C;
+}
+.J_Popup .popup__content {
+  background: #fff;
+}
+.J_Popup .popup__content .content_container {
+  padding: 20rpx 0rpx 20rpx 20rpx;
+}
+.J_Popup .popup__content .content_container .top {
+  justify-content: flex-start;
+  border-bottom: 1px solid #dfdfdf;
+  position: relative;
+  display: flex;
+  justify-content: 510rpx;
+  padding: 20rpx 40rpx 20rpx 0rpx;
+}
+.J_Popup .popup__content .content_container .top image {
+  width: 210rpx;
+  height: 210rpx;
+  display: inline-block;
+}
+.J_Popup .popup__content .content_container .top .close_icon {
+  width: 42rpx;
+  height: 42rpx;
+  right: 20rpx;
+  top: 24rpx;
+  position: absolute;
+}
+.J_Popup .popup__content .content_container .top view {
+  margin-left: 10rpx;
+  display: inline-block;
+  width: 450rpx;
+}
+.J_Popup .popup__content .content_container .top view text {
+  display: block;
+}
+.J_Popup .popup__content .content_container .top view .name {
+  font-size: 34rpx;
+  color: #6f6f6f;
+}
+.J_Popup .popup__content .content_container .top view .money {
+  color: #FF3E4C;
+  font-size: 36rpx;
+  position: absolute;
+  bottom: 20rpx;
+  margin-left: 0rpx;
+}
+.J_Popup .popup__content .content_container .top view .money .oldPrice {
+  color: #cfcfcf;
+  text-decoration: line-through;
+  display: inline-block;
+  margin-right: 20rpx;
+}
+.J_Popup .popup__content .content_container .top view .money .newPrice {
+  display: inline-block;
+}
+.J_Popup .popup__content .content_container .middle {
+  padding: 20rpx 0rpx 20rpx 0rpx;
+  border-bottom: 1px solid #dfdfdf;
+}
+.J_Popup .popup__content .content_container .middle text {
+  display: block;
+}
+.J_Popup .popup__content .content_container .middle .tag {
+  padding: 8rpx 12rpx;
+  color: #fff;
+  background: #FF3E4C;
+  width: 100rpx;
+  text-align: center;
+  border-radius: 10rpx;
+  margin-top: 10rpx;
+}
+.J_Popup .popup__content .content_container .bottom {
+  padding: 20rpx 0rpx 0rpx 0rpx;
+  color: #6f6f6f;
+}
+.J_Popup .popup__content .content_container .bottom .title {
+  display: inline-block;
+  width: 30%;
+  vertical-align: bottom;
+}
+.J_Popup .popup__content .content_container .bottom .stores {
+  display: inline-block;
+  width: 44%;
+  vertical-align: bottom;
+}
+.J_Popup .popup__content .content_container .bottom .counterStyle {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.J_Popup .popup__content .content_container .bottom .counterStyle view {
+  overflow: hidden;
+}
+.J_Popup .popup__content button {
+  width: 100vw;
+  padding: 10rpx;
+  border: none;
+  background: #FF622B;
+  color: #fff;
+  font-size: 36rpx;
+  border-radius: 0rpx;
+}

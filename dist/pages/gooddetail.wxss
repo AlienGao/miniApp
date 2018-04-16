@@ -1,0 +1,155 @@
+@import "./../npm/wepy-com-toast/toast.wxss";
+@import "./../components/tabBar.wxss";
+@import "./../components/goods.wxss";
+@import "./../components/reputation-content.wxss";
+@import "./../components/reputation-chioces.wxss";
+@import "./../components/detaildesc.wxss";
+.goodDetail-container .wetoast__bd {
+  padding: 40rpx 60rpx;
+  min-width: 0rpx;
+  min-height: 0rpx;
+  width: auto;
+}
+.swiper-container {
+  width: 750rpx;
+  position: relative;
+}
+.swiper-container .swiper_box {
+  width: 100%;
+  height: 748rpx;
+}
+.swiper-container swiper-item image {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  height: 748rpx;
+}
+.swiper-container swiper-item video {
+  width: 100%;
+  height: 748rpx;
+}
+.swiper-container .dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20rpx;
+  display: flex;
+  justify-content: center;
+}
+.swiper-container .dots .dot {
+  margin: 0 8rpx;
+  width: 14rpx;
+  height: 14rpx;
+  background: #fff;
+  border-radius: 50%;
+  transition: all .6s;
+  opacity: .5;
+}
+.swiper-container .dots .dot.active {
+  width: 14rpx;
+  opacity: 1;
+}
+.good-info {
+  padding: 20rpx;
+  position: relative;
+  background: #fff;
+}
+.good-info .good-title {
+  padding-top: 10rpx;
+  font-size: 36rpx;
+  width: 80%;
+}
+.good-info .good-price {
+  margin-top: 10rpx;
+  font-size: 32rpx;
+}
+.good-info .good-price view {
+  display: inline-block;
+  vertical-align: bottom;
+}
+.good-info .good-price .newPrice {
+  margin-left: 32rpx;
+}
+.good-info .good-price .newPrice view:nth-child(2) {
+  margin-left: 16rpx;
+}
+.good-info .good-share {
+  color: #F63637;
+  font-size: 28rpx;
+  margin-top: 10rpx;
+}
+.good-info .goods-info-fx {
+  position: absolute;
+  top: 30rpx;
+  right: 20rpx;
+  text-align: center;
+  width: 120rpx;
+  height: 80rpx;
+}
+.good-info .goods-info-fx image {
+  width: 40rpx;
+  height: 40rpx;
+}
+.good-info .goods-info-fx button {
+  position: absolute;
+  width: 50px;
+  height: 60px;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  opacity: 0;
+}
+.good-info .goods-info-fx text {
+  position: absolute;
+  top: 46rpx;
+  left: 4rpx;
+  font-size: 10px;
+  text-align: center;
+  font-size: 26rpx;
+  color: #666;
+}
+.good-info .goods-info-fx i {
+  font-size: 36rpx;
+}
+.reputation-container {
+  margin-top: 20rpx;
+  background: #fff;
+  padding-bottom: 30rpx;
+}
+.reputation-container .title {
+  padding: 30rpx 20rpx 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 30rpx;
+}
+.reputation-container .title .lookall {
+  color: rgba(246, 54, 55, 0.8);
+}
+.reputation-container .title .lookall i {
+  margin-left: 16rpx;
+}
+.reputation-container .content {
+  padding: 0rpx 20rpx;
+}
+.reputation-container .noReputation {
+  font-size: 26rpx;
+  color: #c7c7c7;
+  text-align: center;
+  line-height: 40rpx;
+}
+.recommend {
+  margin-top: 20rpx;
+  padding-bottom: 105rpx;
+}
+.recommend .title {
+  text-align: center;
+  font-size: 28rpx;
+  color: #999;
+}
+.recommend .title .line {
+  width: 90rpx;
+  height: 2rpx;
+  background: #999;
+  vertical-align: middle;
+  display: inline-block;
+}

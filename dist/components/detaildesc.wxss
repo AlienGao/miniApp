@@ -1,0 +1,17 @@
+@import "./htmlParse.wxss";
+.detail-container {
+  margin-top: 20rpx;
+}
+.detail-container .title {
+  text-align: center;
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 20rpx;
+}
+.detail-container .title .line {
+  width: 90rpx;
+  height: 2rpx;
+  background: #999;
+  vertical-align: middle;
+  display: inline-block;
+}

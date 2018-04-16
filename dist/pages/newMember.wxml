@@ -1,0 +1,48 @@
+
+  <view class="new_container">
+    <image style="width: 100%;height:250rpx" src="../images/ponous_top.jpg"/>
+    <wxc-tab default-index="{{1}}" active-text-color="#108ee9" active-line-color="#108ee9" component-id="c1" animate="{{true}}">
+      <wxc-tab-panel  wx:for="{{tabs}}" wx:for-item="tab" wx:key="{{tab.content}}" tab-index="{{index}}" label="{{tab.title}}" component-id="c1">
+        <block wx:for="{{tab.content}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+          <view class="content_container">
+            <image src="../images/ponous.png"/>
+            <view class="content">
+              <view class="money">
+                <text>{{item.moneyMax}}</text>元
+              </view>
+              <view class="name">
+                <view class="title" style="width: 64%">
+                  <text style="font-size: 30rpx">
+                    {{item.name}}
+                    <text style="font-size: 24rpx;line-height:50rpx;">满{{item.moneyHreshold}}元可用</text>
+                  </text>
+                </view>
+                <view style="width: 36%">
+                  <button bindtap="tapButton" size="mini" plain="true" data-wpytapbutton-a="{{item.id}}">{{hasReceive ? '已领取' : '立即领取'}}</button>
+                </view>
+              </view>
+            </view>
+            <view class="bottom-content">
+              <view wx:if="{{item.dateEndType == 0}}"> {{item.dateEnd}} 前有效 </view>
+              <view wx:if="{{item.dateEndType == 1}}"> 领取 {{item.dateEndDays}} 天内有效 </view>
+            </view>
+          </view>
+        </block>
+      </wxc-tab-panel>
+    </wxc-tab>
+    
+    <view class="wetoast {{$toast$reveal ? 'wetoast_show' : ''}}">
+        <view class="wetoast__mask"/>
+        <view class="wetoast__bd" animation="{{$toast$animationData}}">
+            <block  wx:if="{{$toast$img}}">
+                <view class="wetoast__bd__img {{$toast$imgClassName || ''}}">
+                    <image class="wetoast__bd__img_desc" src="{{$toast$img}}" mode="{{$toast$imgMode || 'scaleToFill'}}"/>
+                </view>
+            </block>
+            <block  wx:if="{{$toast$title}}">
+                <view class="wetoast__bd__title {{$toast$titleClassName || ''}}">{{$toast$title}}</view>
+            </block>
+        </view>
+    </view>
+
+  </view>

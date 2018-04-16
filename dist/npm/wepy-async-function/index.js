@@ -1,0 +1,1 @@
+var g=require("./global.js");g.Promise=require("./../promise-polyfill/lib/index.js"),g.regeneratorRuntime=require("./../regenerator-runtime/runtime.js");

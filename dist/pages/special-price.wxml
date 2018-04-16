@@ -1,0 +1,16 @@
+
+  <view class="specialPrice-container">
+    
+  <view class="goods">
+    <block wx:for="{{$goods$recommend}}" wx:for-index="$goods$index" wx:for-item="$goods$item" wx:key="$goods$index">
+      <view class="good-container" bindtap="$goods$toDetail" data-wpytodetail-a="{{$goods$item}}">
+        <image src="{{$goods$item.pic}}" class="good-image"/>
+        <view class="describe">
+          <wxc-elip style="font-size: 28rpx;line-height: 36rpx;">{{$goods$item.name}}</wxc-elip>
+          <text style="color: #f00;font-size: 28rpx;margin-right: 20rpx">￥{{$goods$item.minPrice}}</text><text style="color: #a0a0a0;font-size: 24rpx">销量{{$goods$item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  </view>

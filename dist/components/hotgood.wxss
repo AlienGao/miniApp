@@ -1,0 +1,17 @@
+.hotgood-container {
+  position: relative;
+  width: 100%;
+  background: #fff;
+}
+.hotgood-container .icon {
+  position: absolute;
+  top: 20rpx;
+  left: 20rpx;
+  display: block;
+  width: 40rpx;
+  height: 40rpx;
+}
+.hotgood-container image {
+  width: 100%;
+  height: 410rpx;
+}

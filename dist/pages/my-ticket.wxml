@@ -1,0 +1,23 @@
+
+  <view class="ticket-container">
+    <block wx:for="{{tickets}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <view style="position: relative" bindtap="chooseTicket" data-wpychooseticket-a="{{item}}">
+        <image src="../images/ticket-background.png"/>
+        <image src="../images/can_use.png" class="canuse"/>
+        <view class="text-container">
+          <view class="money">{{item.money}}<text>元</text></view>
+          <view class="name">{{item.name}}</view>
+          <view class="tips">
+            <text>满 {{item.moneyHreshold}} 元使用</text>
+            <text style="margin-left: 28rpx;">{{item.dateEnd}} 前使用有效</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view  wx:if="{{tickets.length == 0}}" class="no-fav">
+      <image src="../images/fav.png"/>
+      <view style="font-size:30rpx;color:#8a8a8a;margin-top:30rpx;text-align:center">
+        还没有收藏呢
+      </view>
+    </view>
+  </view>

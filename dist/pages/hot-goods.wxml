@@ -1,0 +1,19 @@
+
+  <view class="hotgoods-container">
+    <block wx:for="{{goods}}" wx:for-index="index" wx:for-item="item" wx:key="key">
+      <view class="single-container" bindtap="toDetail" data-wpytodetail-a="{{item}}">
+        
+  <view class="hotgood-container">
+    <image class="icon" src="../images/hot.png"/>
+    
+          <image src="{{item.pic}}"/>
+        
+  </view>
+
+        <view class="describe">
+          <wxc-elip style="font-size: 28rpx;line-height: 36rpx;">{{item.name}}</wxc-elip>
+          <text style="color: #f00;font-size: 28rpx;margin-right: 20rpx">￥{{item.minPrice}}</text><text style="color: #a0a0a0;font-size: 24rpx">销量{{item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </block>
+  </view>

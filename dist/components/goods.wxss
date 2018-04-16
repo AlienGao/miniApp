@@ -1,0 +1,22 @@
+.goods {
+  padding: 20rpx 20rpx 0rpx 20rpx;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  line-height: 1;
+}
+.goods .good-container {
+  background: #fff;
+  width: 48%;
+  margin-bottom: 20rpx;
+}
+.goods .good-container image {
+  width: 100%;
+  height: 410rpx;
+}
+.goods .good-container .describe {
+  padding: 10rpx;
+}
+.goods .good-container .describe text {
+  line-height: 32rpx;
+}

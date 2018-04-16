@@ -1,0 +1,140 @@
+@import "./../npm/wepy-com-toast/toast.wxss";
+.shop_cart movable-area {
+  width: 100vw;
+  height: 240rpx;
+  background: #fff;
+  border-bottom: 2rpx solid #dfdfdf;
+}
+.shop_cart movable-view {
+  width: 120vw;
+  height: 220rpx;
+  padding: 10rpx 0rpx;
+  position: absolute;
+  right: 0rpx;
+  top: 0rpx;
+}
+.shop_cart .container {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 20rpx;
+  height: 240rpx;
+  margin-bottom: 120rpx;
+}
+.shop_cart .container .choose {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 50%;
+  margin-top: 94rpx;
+  position: relative;
+}
+.shop_cart .container .choose.active {
+  border: 2rpx solid #d81e06;
+}
+.shop_cart .container .choose image {
+  width: 36rpx;
+  height: 36rpx;
+  position: absolute;
+  left: -2rpx;
+  top: -2rpx;
+}
+.shop_cart .container .content-container {
+  display: flex;
+  justify-content: space-between;
+  width: 680rpx;
+  margin: 10rpx 0rpx 10rpx 20rpx;
+  position: relative;
+}
+.shop_cart .container .content-container image {
+  width: 200rpx;
+  height: 200rpx;
+}
+.shop_cart .container .content-container .name,
+.shop_cart .container .content-container .number {
+  display: block;
+  font-size: 32rpx;
+  width: 440rpx;
+}
+.shop_cart .container .content-container .number {
+  position: absolute;
+  left: 234rpx;
+  bottom: 30rpx;
+  color: red;
+}
+.shop_cart .container .content-container wxc-counter {
+  position: absolute;
+  bottom: 24rpx;
+  right: 20rpx;
+}
+.shop_cart .container .content-container wxc-counter view,
+.shop_cart .container .content-container wxc-counter text {
+  overflow: hidden;
+}
+.shop_cart .container .delete {
+  background: red;
+  width: 146rpx;
+  line-height: 240rpx;
+  text-align: center;
+  color: #fff;
+}
+.shop_cart .fixedBar {
+  display: flex;
+  height: 100rpx;
+  line-height: 100rpx;
+  padding-left: 20rpx;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1rpx solid #dfdfdf;
+  position: fixed;
+  bottom: 0rpx;
+  left: 0rpx;
+}
+.shop_cart .fixedBar .choose {
+  width: 32rpx;
+  height: 32rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 50%;
+  margin-top: 34rpx;
+  position: relative;
+}
+.shop_cart .fixedBar .choose.active {
+  border: 2rpx solid #d81e06;
+}
+.shop_cart .fixedBar .choose image {
+  width: 36rpx;
+  height: 36rpx;
+  position: absolute;
+  left: -2rpx;
+  top: -2rpx;
+}
+.shop_cart .fixedBar .content {
+  padding: 0rpx 28rpx;
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 2;
+  font-size: 32rpx;
+}
+.shop_cart .fixedBar button {
+  border: none;
+  background: #d81e06;
+  border-radius: 0rpx;
+  color: #fff;
+  flex-grow: 2;
+  line-height: 100rpx;
+}
+.shop_cart .no-orders {
+  padding: 200rpx 20rpx;
+  color: #dbdbdb;
+}
+.shop_cart .no-orders image {
+  display: block;
+  width: 200rpx;
+  height: 200rpx;
+  margin: 0 auto;
+}
+.shop_cart .no-orders text {
+  display: block;
+  text-align: center;
+  font-size: 36rpx;
+  line-height: 80rpx;
+}

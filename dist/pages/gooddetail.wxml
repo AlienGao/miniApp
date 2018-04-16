@@ -1,0 +1,179 @@
+
+  <view class="goodDetail-container">
+    <view class="swiper-container">
+      <swiper class="swiper_box" autoplay="{{true}}" interval="{{3000}}" duration="{{1500}}" bindchange="swiperChange">
+        <swiper-item  wx:if="{{goodDetail.basicInfo.videoId.length > 0}}">
+          <video src="{{videoMp4Src}}" autoplay="{{false}}" loop="{{false}}" objectFit="fill"/>
+        </swiper-item>
+        <block wx:for="{{goodDetail.pics}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+          <swiper-item>
+            <image src="{{item.pic}}_m" class="slide-image" lazy-load="true"/>
+          </swiper-item>
+        </block>
+      </swiper>
+      <view class="dots">
+        <block wx:for="{{sourceLength}}" wx:for-index="index" wx:for-item="item" wx:key="key">
+          <view class="dot {{index === swiperCurrent ? 'active' : ''}}"/>
+        </block>
+      </view>
+    </view>
+    <view class="good-info">
+      <view class="good-title">{{goodDetail.basicInfo.name}}</view>
+      <view class="good-price">
+        <view class="oldPrice">零售价<view style="color: #777">￥{{oldPrice}}</view></view>
+        <view class="newPrice">拼团价<view style="color: #777">￥{{newPrice}}</view><view style="color: red">(3件成团)</view></view>
+      </view>
+      <view class="good-share"  wx:if="{{goodDetail.basicInfo.commissionType == 1}}">分享有礼，好友下单后可得{{goodDetail.basicInfo.commission}}积分奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 2}}">分享有礼，好友下单后可得{{goodDetail.basicInfo.commission}}元现金奖励</view>
+      <view class="good-share" wx:if="{{goodDetail.basicInfo.commissionType == 0}}">此宝贝暂未参加分享优惠购活动</view>
+      <view class="goods-info-fx">
+        <image src="../images/Share.png"/>
+        <button open-type="share">分享</button>
+        <text>分享有礼</text>
+      </view>
+    </view>
+    <view class="reputation-container">
+      <view class="title">
+        <view>宝贝评价({{reputation}})</view>
+        <view wx:if="{{reputation > 0}}" class="lookall" bindtap="lookall">查看全部<i class="fa fa-angle-right"/></view>
+      </view>
+      <view class="content" wx:if="{{reputation > 0}}">
+        
+  <view class="options">
+    <view bindtap="$reputationChioces$chooseIndex" class="{{$reputationChioces$reputationIndex == 'all' ? 'active' : ''}}" data-wpychooseindex-a="all">全部({{$reputationChioces$reputation[0] > 0 ? $reputationChioces$reputation[0] : 0}})</view>
+    <view bindtap="$reputationChioces$chooseIndex" class="{{$reputationChioces$reputationIndex == '2' ? 'active' : ''}}" data-wpychooseindex-a="2">好评({{$reputationChioces$reputation[1] > 0 ? $reputationChioces$reputation[1] : 0}})</view>
+    <view bindtap="$reputationChioces$chooseIndex" class="{{$reputationChioces$reputationIndex == '1' ? 'active' : ''}}" data-wpychooseindex-a="1">中评({{$reputationChioces$reputation[2] > 0 ? $reputationChioces$reputation[2] : 0}})</view>
+    <view bindtap="$reputationChioces$chooseIndex" class="{{$reputationChioces$reputationIndex == '0' ? 'active' : ''}}" data-wpychooseindex-a="0">差评({{$reputationChioces$reputation[3] > 0 ? $reputationChioces$reputation[3] : 0}})</view>
+  </view>
+
+        
+  <view class="reputation-content">
+    <view bindtap="$reputationContent$lookall"  wx:if="{{!$reputationContent$isShowAll}}">
+      <view class="user">
+        <image src="{{$reputationContent$filterData.avatarUrl}}"/>
+        <text>{{$reputationContent$filterData.nick}}</text>
+        <text class="time">{{$reputationContent$filterData.reputationDate}}</text>
+      </view>
+      <view class="goodReputation">
+        {{$reputationContent$filterData.goodReputationRemark}}
+      </view>
+    </view>
+    <view  wx:if="{{$reputationContent$isShowAll}}" class="showall-container">
+      <block wx:for="{{$reputationContent$content}}" wx:for-index="$reputationContent$index" wx:for-item="$reputationContent$item" wx:key="$reputationContent$index">
+        <view class="user">
+          <image src="{{$reputationContent$item.avatarUrl}}"/>
+          <text>{{$reputationContent$item.nick}}</text>
+          <text class="time">{{$reputationContent$item.reputationDate}}</text>
+        </view>
+        <view class="goodReputation">
+            {{$reputationContent$item.goodReputationRemark}}
+        </view>
+      </block>
+    </view>
+  </view>
+
+      </view>
+      <view class="noReputation" wx:if="{{reputation == 0}}">
+        <i class="fa fa-commenting-o" style="margin-right: 10rpx"/>暂无评价
+      </view>
+    </view>
+    
+  <view class="detail-container">
+    <view class="title">
+      <i class="line"/>
+      <i class="fa fa-picture-o" style="margin: 0rpx 10rpx"/>详情
+      <i class="line"/>
+    </view>
+    
+  <import src="../wxParse/wxParse.wxml"/>
+  <block  wx:for="{{$detaildesc$htmlparse$htmlParserTpl.nodes}}" wx:key="{{index}}">
+    <template is="wxParse0" data="{{item}}"/>
+  </block>
+
+  </view>
+
+    <view class="recommend">
+      <view class="title">
+        <i class="line"/>
+        <i class="fa fa-shopping-bag" style="margin: 0rpx 10rpx"/>猜你喜欢
+        <i class="line"/>
+      </view>
+      
+  <view class="goods">
+    <block wx:for="{{$recommend$recommend}}" wx:for-index="$recommend$index" wx:for-item="$recommend$item" wx:key="$recommend$index">
+      <view class="good-container" bindtap="$recommend$toDetail" data-wpytodetail-a="{{$recommend$item}}">
+        <image src="{{$recommend$item.pic}}" class="good-image"/>
+        <view class="describe">
+          <wxc-elip style="font-size: 28rpx;line-height: 36rpx;">{{$recommend$item.name}}</wxc-elip>
+          <text style="color: #f00;font-size: 28rpx;margin-right: 20rpx">￥{{$recommend$item.minPrice}}</text><text style="color: #a0a0a0;font-size: 24rpx">销量{{$recommend$item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+    </view>
+    
+<view>
+  <view class="tabBar">
+    <view class="button-group">
+      <view bindtap="$tabbar$toIndex">
+        <image src="../images/home.png"/>
+      </view>
+      <button open-type="contact" plain="true">
+        <image src="../images/servicer.png"/>
+      </button>
+      <view bindtap="$tabbar$toggleCollect">
+        <image src="../images/{{$tabbar$isCollection ? 'collection_active' : 'collection'}}.png"/>
+      </view>
+    </view>
+    <view class="shop-cart" bindtap="$tabbar$addGoods">加入购物车</view>
+    <view class="buy-now" bindtap="$tabbar$buyNow">立即购买</view>
+  </view>
+  <wxc-popup class="J_Popup" animation-mode="bottom" align="bottom" locked="true">
+    <view class="popup__content">
+      <view class="content_container">
+        <view class="top">
+          <image src="{{$tabbar$goodDetail.basicInfo.pic}}"/>
+          <image src="../images/close_icon.png" class="close_icon" bindtap="$tabbar$onClose"/>
+          <view>
+            <text class="name">{{$tabbar$goodDetail.basicInfo.name}}</text>
+            <view class="money">
+              <text  wx:if="{{$tabbar$orderNumber < 3}}">￥ {{$tabbar$goodDetail.basicInfo.originalPrice}}</text> 
+              <view  wx:if="{{$tabbar$orderNumber > 2}}">
+                <text class="oldPrice">￥ {{$tabbar$goodDetail.basicInfo.originalPrice}}</text>
+                <text class="newPrice">￥ {{$tabbar$goodDetail.basicInfo.minPrice}}</text>  
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="middle">
+          <text>尺码</text>
+          <text class="tag">均码</text>
+        </view>
+        <view class="bottom">
+          <text class="title">数量</text>
+          <text class="stores">库存 {{$tabbar$goodDetail.basicInfo.stores}} 件</text>
+          <wxc-counter class="counterStyle" number="{{1}}" max="{{1000}}" min="0" catchchangenumber="$tabbar$onChangeNumber"/>
+        </view>
+      </view>
+      <button bindtap="$tabbar$addGoodsConfim" plain="true">确定</button>    
+    </view>
+  </wxc-popup>
+</view>
+
+    
+    <view class="wetoast {{$toast$reveal ? 'wetoast_show' : ''}}">
+        <view class="wetoast__mask"/>
+        <view class="wetoast__bd" animation="{{$toast$animationData}}">
+            <block  wx:if="{{$toast$img}}">
+                <view class="wetoast__bd__img {{$toast$imgClassName || ''}}">
+                    <image class="wetoast__bd__img_desc" src="{{$toast$img}}" mode="{{$toast$imgMode || 'scaleToFill'}}"/>
+                </view>
+            </block>
+            <block  wx:if="{{$toast$title}}">
+                <view class="wetoast__bd__title {{$toast$titleClassName || ''}}">{{$toast$title}}</view>
+            </block>
+        </view>
+    </view>
+
+  </view>

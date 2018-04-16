@@ -1,0 +1,44 @@
+
+  <view class="container">
+    <view class="tabs">
+      <block wx:for="{{tabs}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="{{index == activeIndex ? 'active' : 'ordinary' }}" bindtap="changeIndex" data-wpychangeindex-a="{{index}}">
+          {{item}}
+          <text class="dot"  wx:if="{{activeArray[index]}}"/>
+        </view>
+      </block>
+    </view>
+    <block  wx:if="{{orders.length > 0}}" wx:for="{{orders}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <view class="order">
+        <view class="top">
+          <view class="content">
+            <text>下单时间: {{item.dateAdd}}</text>
+            <text style="color: #d81e06">{{item.statusStr}}</text>
+          </view>
+          <view class="orderNumber">
+            订单号: {{item.orderNumber}}
+          </view>
+          <view class="orderNumber" wx:if="{{item.remark && item.remark.length > 0}}">
+            备注: {{item.remark}}
+          </view>
+        </view>
+        <view class="images">
+          <block wx:for="{{goods[item.id]}}" wx:for-index="goodIndex" wx:for-item="goodItem" wx:key="goodIndex">
+            <image src="{{goodItem.pic}}"/>
+          </block>
+        </view>
+        <view class="bottom">
+          <view class="total">合计: ￥ {{item.amountReal}}</view>
+          <view class="buttons" wx:if="{{activeIndex == 0}}">
+            <button class="cancle" plain bindtap="cancleOrder" data-wpycancleorder-a="{{item}}">取消订单</button>
+            <button class="pay" plain bindtap="payOrder" data-wpypayorder-a="{{item}}">立即支付</button>
+          </view>
+          <button plain wx:if="{{activeIndex == 3}}" class="recommend" bindtap="recommendOrder" data-wpyrecommendorder-a="{{item}}">去评价</button>
+        </view>
+      </view>
+    </block>
+    <view class="no-orders" wx:if="{{orders.length == 0}}">
+      <image src="../images/shop_cart.png"/>
+      <text>还没有订单哦~</text>
+    </view>
+  </view>

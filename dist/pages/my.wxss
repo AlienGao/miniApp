@@ -1,0 +1,120 @@
+.my-container {
+  background: #fff;
+  height: 100vh;
+}
+.my-container .userInfo {
+  display: flex;
+  justify-content: flex-start;
+  height: 160rpx;
+  padding: 20rpx;
+}
+.my-container .userInfo .info {
+  padding: 20rpx;
+  flex-grow: 2;
+  font-size: 48rpx;
+  font-weight: bolder;
+}
+.my-container .userInfo .info button {
+  padding: 0rpx;
+  border: none;
+  text-align: left;
+  color: #ccc;
+  font-weight: lighter;
+  line-height: 80rpx;
+  font-size: 36rpx;
+}
+.my-container .userInfo .avatar {
+  flex-flow: 1;
+  padding: 20rpx;
+}
+.my-container .userInfo .avatar image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+}
+.my-container .mess {
+  display: flex;
+  justify-content: flex-start;
+  height: 100rpx;
+  border-bottom: 1px solid #efefef;
+}
+.my-container .mess .line {
+  width: 2rpx;
+  height: 60rpx;
+  margin-top: 20rpx;
+  background: #ccc;
+}
+.my-container .mess .score,
+.my-container .mess .balance {
+  width: 50%;
+  padding: 20rpx 30rpx;
+  text-align: center;
+}
+.my-container .mess .score text,
+.my-container .mess .balance text {
+  display: inline-block;
+  color: #666;
+}
+.my-container .mess .score image,
+.my-container .mess .balance image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: inline-block;
+}
+.my-container .order {
+  padding: 40rpx 20rpx 20rpx;
+  color: #9f9f9f;
+}
+.my-container .order text {
+  display: block;
+}
+.my-container .order .icons {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 30rpx;
+}
+.my-container .order .icons view {
+  padding: 20rpx 0rpx;
+  width: 33%;
+  text-align: center;
+  position: relative;
+}
+.my-container .order .icons view image {
+  width: 80rpx;
+  height: 60rpx;
+}
+.my-container .order .icons view text {
+  margin-top: 12rpx;
+}
+.my-container .order .icons view .dot {
+  position: absolute;
+  top: 4rpx;
+  right: 42rpx;
+  display: block;
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #d81e06;
+}
+.my-container .order .line {
+  width: 2rpx !important;
+  height: 80rpx;
+  padding: 0rpx !important;
+  background: #ccc;
+  margin-top: 40rpx;
+}
+.my-container .bottom-container {
+  border-top: 30rpx solid #efefef;
+}
+.my-container .bottom-container navigator {
+  padding: 30rpx 40rpx;
+  border-bottom: 1rpx solid #efefef;
+  display: flex;
+  justify-content: space-between;
+}
+.my-container .bottom-container navigator image {
+  width: 30rpx;
+  height: 30rpx;
+  margin-top: 10rpx;
+}

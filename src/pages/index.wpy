@@ -57,7 +57,7 @@
     config = {
       navigationBarTitleText: '花田靴下袜子专卖店',
       usingComponents: {
-        'wxc-elip': '../../packages/@minui/wxc-elip/dist/index'
+        'wxc-elip': '../../packages/@minui/wxc-elip/dist/index',
       }
     }
     components = {

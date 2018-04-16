@@ -1,0 +1,51 @@
+.fav {
+  padding: 20rpx;
+  background: #fff;
+  border-bottom: 2rpx solid #efefef;
+  display: flex;
+  justify-content: space-between;
+}
+.fav:nth-last-child(1) {
+  border: none;
+}
+.fav image {
+  width: 160rpx;
+  height: 160rpx;
+  display: inline-block;
+}
+.fav .content {
+  display: inline-block;
+  position: relative;
+  width: 530rpx;
+  padding-left: 20rpx;
+}
+.fav .content .name {
+  display: block;
+  line-break: 60rpx;
+  font-size: 30rpx;
+}
+.fav .content .time {
+  color: #c6c6c6;
+  font-size: 26rpx;
+  line-height: 40rpx;
+  display: block;
+}
+.fav .content button {
+  line-height: 1;
+  padding: 4rpx 8rpx;
+  font-size: 24rpx;
+  color: #EED8A3;
+  border: 2rpx solid #EED8A3;
+  position: absolute;
+  bottom: 10rpx;
+  right: 20rpx;
+}
+.no-fav {
+  padding: 200rpx 30rpx;
+}
+.no-fav image {
+  width: 200rpx;
+  height: 200rpx;
+  display: block;
+  margin: 0 auto;
+}

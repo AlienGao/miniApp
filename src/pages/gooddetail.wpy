@@ -292,7 +292,7 @@ export default class GoodDeatail extends wepy.page {
     // 商品评价
     setTimeout(function(){
       that.$invoke('reputation-content', 'getContent', 'all', 'false')
-    }, 100)
+    }, 500)
   }
   onShareAppMessage() {
     return {

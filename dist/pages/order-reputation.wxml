@@ -1,0 +1,44 @@
+
+  <view class="order">
+    <view class="top">
+      <view class="title">
+        订单信息
+      </view>
+      <view class="content">
+        <text>下单时间: {{order.dateAdd}}</text>
+        <text style="color: #d81e06">{{order.statusStr}}</text>
+      </view>
+      <view class="orderNumber">
+        订单号: {{order.orderNumber}}
+      </view>
+      <view class="orderNumber"  wx:if="{{order.remark && order.remark.length > 0}}">
+        备注: {{order.remark}}
+      </view>
+    </view>
+    <view class="images">
+      <block wx:for="{{goods}}" wx:for-index="goodIndex" wx:for-item="goodItem" wx:key="goodIndex">
+        <image src="{{goodItem.pic}}"/>
+      </block>
+    </view>
+    <view class="bottom">
+      <view class="total">合计: ￥ {{order.amountReal}}</view>
+    </view>
+    <form bindsubmit="submitReputation" report-submit="true">
+      <view class="reputation">
+        <view class="section section_gap">
+          <view style="margin-top:35rpx;margin-bottom:35rpx;">评价：</view>
+          <radio-group name="goodReputation">
+            <label style="margin-right:35rpx;"><radio value="2" checked/>好评</label>
+            <label style="margin-right:35rpx;"><radio value="1"/>中评</label>
+            <label style="margin-right:35rpx;"><radio value="0"/>差评</label>
+          </radio-group>
+        </view>
+        <view class="row-box" style="margin-top:35rpx">
+          <view class="row-label">备注</view>
+          <input name="orderGoodsId" value="{{order.id}}" style="display:none;"/>
+          <textarea name="goodReputationRemark" style="margin-top:35rpx;width:100%;" value="非常愉快的一次购物！"/>
+        </view>
+      </view>
+      <button formType="submit" plain class="submit">提交评论</button>
+    </form>
+  </view>

@@ -1,0 +1,182 @@
+.container {
+  width: 100vw;
+  min-height: 100vh;
+}
+.top_container {
+  display: flex;
+  padding: 10rpx 20rpx;
+  height: 100rpx;
+  box-sizing: border-box;
+  background: #fff;
+  border-top: 20rpx solid #efefef;
+}
+.top_container image {
+  width: 48rpx;
+  height: 48rpx;
+  margin-top: 6rpx;
+}
+.top_container .content {
+  display: flex;
+  justify-content: space-between;
+  font-size: 32rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  flex-grow: 2;
+  padding-left: 26rpx;
+}
+.top_container .content image {
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 12rpx;
+}
+.top_address {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 20rpx;
+  height: 160rpx;
+  box-sizing: border-box;
+  background: #fff;
+  border-top: 20rpx solid #efefef;
+}
+.top_address image {
+  width: 32rpx;
+  height: 32rpx;
+  margin: 15rpx;
+}
+.top_address .content {
+  width: 640rpx;
+  display: flex;
+  justify-content: space-between;
+}
+.top_address .content .text .top_text {
+  height: 60rpx;
+  line-height: 60rpx;
+  font-size: 32rpx;
+  display: block;
+}
+.top_address .content .text .bottom_text {
+  height: 40rpx;
+  line-height: 40rpx;
+  font-size: 26rpx;
+  display: block;
+}
+.top_address .content image {
+  width: 36rpx;
+  height: 36rpx;
+  margin-top: 38rpx;
+}
+.middle_container {
+  border-top: 20rpx solid #efefef;
+  padding-left: 20rpx;
+  background: #fff;
+}
+.middle_container .title {
+  display: block;
+  padding: 20rpx 0rpx;
+  border-bottom: 2rpx solid #dfdfdf;
+  font-size: 32rpx;
+}
+.middle_container .goods {
+  padding: 20rpx 20rpx 20rpx 0rpx;
+  display: flex;
+  border-bottom: 1px solid #dfdfdf;
+}
+.middle_container .goods:nth-last-child(1) {
+  border: none;
+}
+.middle_container .goods image {
+  width: 200rpx;
+  height: 200rpx;
+}
+.middle_container .goods .content {
+  position: relative;
+  width: 500rpx;
+  font-size: 26rpx;
+}
+.middle_container .goods .content .text {
+  display: flex;
+  justify-content: space-between;
+}
+.middle_container .goods .content .text .name {
+  padding: 0rpx 10rpx;
+}
+.middle_container .goods .content .text .price {
+  width: 190rpx;
+  text-align: right;
+}
+.middle_container .goods .content .number {
+  text-align: right;
+  position: absolute;
+  bottom: 20rpx;
+  right: 0rpx;
+}
+.bottom_container {
+  padding-left: 20rpx;
+  border-top: 20rpx solid #efefef;
+  background: #fff;
+}
+.bottom_container .wuliu {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 20rpx 20rpx 0rpx;
+  border-bottom: 2rpx solid #dfdfdf;
+  font-size: 32rpx;
+}
+.bottom_container .remark {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0rpx 0rpx 20rpx 0rpx;
+  font-size: 32rpx;
+}
+.bottom_container .remark text {
+  flex-grow: 1;
+  margin-top: 12rpx;
+}
+.bottom_container .remark textarea {
+  flex-flow: 3;
+  padding: 0rpx;
+  line-height: 1;
+}
+.conpous {
+  border-top: 20rpx solid #efefef;
+  border-bottom: 20rpx solid #efefef;
+  margin-bottom: 100rpx;
+  padding: 20rpx;
+  display: flex;
+  justify-content: space-between;
+  font-size: 32rpx;
+  background: #fff;
+}
+.conpous image {
+  width: 36rpx;
+  height: 36rpx;
+}
+.fixed {
+  position: fixed;
+  bottom: 0rpx;
+  left: 0rpx;
+  height: 100rpx;
+}
+.fixed view {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 32rpx;
+  line-height: 100rpx;
+  width: 100vw;
+  background: #fff;
+  border-top: 1rpx solid #dfdfdf;
+}
+.fixed view text {
+  color: #d81e06;
+  text-align: right;
+  padding: 0rpx 40rpx;
+  flex-grow: 3;
+}
+.fixed view button {
+  border: none;
+  border-radius: 0rpx;
+  background: #d81e06;
+  color: #fff;
+  font-size: 32rpx;
+  line-height: 100rpx;
+}

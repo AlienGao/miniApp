@@ -1,0 +1,41 @@
+
+  <view class="all-reputation">
+    <!-- wepy不能传递布尔值 -->
+    <view class="button-group">
+      <block wx:for="{{reputation}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view bindtap="chooseIndex" class="item {{reputationIndex == index ? 'active' : ''}}" data-wpychooseindex-a="{{index}}">
+          <text style="display:block">{{item}}</text>
+          <text class="number">{{number[index]}}</text>
+          <view  wx:if="{{index < 3}}"/>
+        </view>
+      </block>
+    </view>
+    <view class="reputation-container">
+      
+  <view class="reputation-content">
+    <view bindtap="$reputationContent$lookall"  wx:if="{{!$reputationContent$isShowAll}}">
+      <view class="user">
+        <image src="{{$reputationContent$filterData.avatarUrl}}"/>
+        <text>{{$reputationContent$filterData.nick}}</text>
+        <text class="time">{{$reputationContent$filterData.reputationDate}}</text>
+      </view>
+      <view class="goodReputation">
+        {{$reputationContent$filterData.goodReputationRemark}}
+      </view>
+    </view>
+    <view  wx:if="{{$reputationContent$isShowAll}}" class="showall-container">
+      <block wx:for="{{$reputationContent$content}}" wx:for-index="$reputationContent$index" wx:for-item="$reputationContent$item" wx:key="$reputationContent$index">
+        <view class="user">
+          <image src="{{$reputationContent$item.avatarUrl}}"/>
+          <text>{{$reputationContent$item.nick}}</text>
+          <text class="time">{{$reputationContent$item.reputationDate}}</text>
+        </view>
+        <view class="goodReputation">
+            {{$reputationContent$item.goodReputationRemark}}
+        </view>
+      </block>
+    </view>
+  </view>
+
+    </view>
+  </view>

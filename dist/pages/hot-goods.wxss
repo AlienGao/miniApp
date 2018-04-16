@@ -1,0 +1,18 @@
+@import "./../components/hotgood.wxss";
+.hotgoods-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 20rpx;
+}
+.hotgoods-container .single-container {
+  width: 48%;
+  background: #fff;
+  margin-bottom: 20rpx;
+}
+.hotgoods-container .single-container .describe {
+  padding: 10rpx;
+}
+.hotgoods-container .single-container .describe text {
+  line-height: 32rpx;
+}

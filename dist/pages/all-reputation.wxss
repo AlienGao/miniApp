@@ -1,0 +1,35 @@
+@import "./../components/reputation-content.wxss";
+@import "./../components/reputation-chioces.wxss";
+.button-group {
+  display: flex;
+  justify-content: flex-start;
+  height: 86rpx;
+  background: #ececec;
+  text-align: center;
+}
+.button-group .item {
+  flex-grow: 1;
+  font-size: 26rpx;
+  padding-top: 10rpx;
+}
+.button-group .item .number {
+  color: #9f9f9f;
+}
+.button-group .item.active {
+  color: #FA5251;
+}
+.button-group .item.active .number {
+  color: #FA5251;
+}
+.button-group .item view {
+  width: 2rpx;
+  height: 50rpx;
+  background: #c6c6c6;
+  float: right;
+  margin-top: -28rpx;
+}
+.reputation-container {
+  background: #fff;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 12rpx 0 #999;
+}

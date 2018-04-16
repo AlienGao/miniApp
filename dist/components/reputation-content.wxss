@@ -1,0 +1,30 @@
+.user image {
+  border-radius: 50%;
+  width: 60rpx;
+  height: 60rpx;
+}
+.user text {
+  font-size: 30rpx;
+  color: #666;
+  vertical-align: 16rpx;
+  margin-left: 10rpx;
+}
+.user .time {
+  color: #cdcdcd;
+  font-size: 24rpx;
+  float: right;
+}
+.showall-container {
+  padding: 16rpx;
+}
+.goodReputation {
+  font-size: 26rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #ccc;
+  margin-bottom: 20rpx;
+}
+.goodReputation:last-child {
+  border: none;
+  margin: 0rpx;
+  padding: 0rpx;
+}

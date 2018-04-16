@@ -1,0 +1,56 @@
+
+  <view class="container">
+    <view class="top_container"  wx:if="{{address == null}}">
+      <image src="../images/add.png"/>
+      <view class="content">
+        <text>新增收货地址</text>
+        <image src="../images/right.png"/>
+      </view>
+    </view>
+    <view class="top_address"  wx:if="{{address !== null}}" bindtap="chooseAddress">
+      <image src="../images/fix.png"/>
+      <view class="content">
+        <view class="text"> 
+          <text class="top_text">{{address.linkMan}} {{address.mobile}}</text>
+          <text class="bottom_text">{{address.address}}</text>
+        </view>
+        <image src="../images/right.png"/>
+      </view>
+    </view>
+    <view class="middle_container">
+      <text class="title">商品列表</text>
+      <block wx:for="{{order}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="goods">
+          <image src="{{item.pic}}"/>
+          <view class="content">
+            <view class="text">
+              <text class="name">{{item.name}}</text>
+              <text class="price">￥ {{item.number > 2 ? item.minPrice : item.originalPrice}}</text>
+            </view>
+            <view class="number">x {{item.number}}</view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view class="bottom_container">
+      <view class="wuliu">
+        <text>配送方式</text>
+        <text>包邮</text>
+      </view>
+      <view class="remark">
+        <text>备注</text>
+        <textarea name="remark" maxlength="-1" class="input" type="text" placeholder="如需备注请输入" value="{{remark}}" bindinput="onConfirm"/>
+      </view>
+    </view>
+    <view class="conpous" bindtap="chooseCoupons">
+      <text>优惠券</text>
+      <image src="../images/right.png" wx:if="{{coupons == 0}}"/>
+      <text wx:if="{{coupons > 0}}">- ￥ {{coupons}}</text>
+    </view>
+    <view class="fixed">
+      <view>
+        <text>合计：￥ {{total}}</text>
+        <button plain bindtap="submitOrder">提交订单</button>
+      </view>
+    </view>
+  </view>

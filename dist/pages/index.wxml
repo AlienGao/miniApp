@@ -1,0 +1,78 @@
+
+  <view class="container">
+    
+  <view class="swiper-container">
+    <swiper class="swiper_box" autoplay="{{$banner$autoplay}}" interval="{{$banner$interval}}" duration="{{$banner$duration}}" bindchange="$banner$swiperChange"> 
+      <block wx:for="{{$banner$banners}}" wx:for-index="$banner$index" wx:for-item="$banner$item" wx:key="$banner$index">
+        <swiper-item>
+          <image bindtap="$banner$toGoodDetail" data-id="{{$banner$item.businessId}}" src="{{$banner$item.picUrl}}_m" class="slide-image"/>
+        </swiper-item>
+      </block>
+    </swiper>
+    <view class="dots">
+      <block wx:for="{{$banner$banners}}" wx:for-index="$banner$index" wx:for-item="$banner$item" wx:key="$banner$index">
+        <view class="dot {{$banner$index === $banner$swiperCurrent ? 'active' : ''}}" bindtap="$banner$pickDot"/>
+      </block>
+    </view>
+    
+    <view class="wetoast {{$banner$toast$reveal ? 'wetoast_show' : ''}}">
+        <view class="wetoast__mask"/>
+        <view class="wetoast__bd" animation="{{$banner$toast$animationData}}">
+            <block  wx:if="{{$banner$toast$img}}">
+                <view class="wetoast__bd__img {{$banner$toast$imgClassName || ''}}">
+                    <image class="wetoast__bd__img_desc" src="{{$banner$toast$img}}" mode="{{$banner$toast$imgMode || 'scaleToFill'}}"/>
+                </view>
+            </block>
+            <block  wx:if="{{$banner$toast$title}}">
+                <view class="wetoast__bd__title {{$banner$toast$titleClassName || ''}}">{{$banner$toast$title}}</view>
+            </block>
+        </view>
+    </view>
+
+  </view>  
+
+    
+  <view class="coupons-container">
+    <block wx:for="{{$coupons$coupons}}" wx:for-index="$coupons$index" wx:for-item="$coupons$item" wx:key="$coupons$index">
+      <view class="item" bindtap="$coupons$toCoupons" data-wpytocoupons-a="{{$coupons$index}}">
+        <image src="{{$coupons$item.picUrl}}_m"/>
+        <text>{{$coupons$item.title}}</text>
+      </view>
+    </block>
+  </view>
+
+    <view>
+      <view class="brand">推荐商品</view>
+      
+  <view class="goods">
+    <block wx:for="{{$goods$recommend}}" wx:for-index="$goods$index" wx:for-item="$goods$item" wx:key="$goods$index">
+      <view class="good-container" bindtap="$goods$toDetail" data-wpytodetail-a="{{$goods$item}}">
+        <image src="{{$goods$item.pic}}" class="good-image"/>
+        <view class="describe">
+          <wxc-elip style="font-size: 28rpx;line-height: 36rpx;">{{$goods$item.name}}</wxc-elip>
+          <text style="color: #f00;font-size: 28rpx;margin-right: 20rpx">￥{{$goods$item.minPrice}}</text><text style="color: #a0a0a0;font-size: 24rpx">销量{{$goods$item.numberOrders || 0}}件</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+    </view>
+    <view class="sign {{active ? 'active' : ''}}" bindtap="sign">
+      {{sign}}
+    </view>
+    
+    <view class="wetoast {{$toast$reveal ? 'wetoast_show' : ''}}">
+        <view class="wetoast__mask"/>
+        <view class="wetoast__bd" animation="{{$toast$animationData}}">
+            <block  wx:if="{{$toast$img}}">
+                <view class="wetoast__bd__img {{$toast$imgClassName || ''}}">
+                    <image class="wetoast__bd__img_desc" src="{{$toast$img}}" mode="{{$toast$imgMode || 'scaleToFill'}}"/>
+                </view>
+            </block>
+            <block  wx:if="{{$toast$title}}">
+                <view class="wetoast__bd__title {{$toast$titleClassName || ''}}">{{$toast$title}}</view>
+            </block>
+        </view>
+    </view>
+
+  </view>
