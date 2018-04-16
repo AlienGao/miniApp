@@ -56,7 +56,6 @@
 
 <script>
 import wepy from 'wepy'
-// var commonCityData = require('../utils/city.js')
 export default class AddressAdd extends wepy.page {
   config = {
     "navigationBarTitleText": "新增地址"
